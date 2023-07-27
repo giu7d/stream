@@ -32,25 +32,32 @@ defmodule StreamCore.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # Ecto
       {:ecto_sql, "~> 3.10"},
-      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
-      {:finch, "~> 0.13"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:gettext, "~> 0.20"},
-      {:jason, "~> 1.2"},
+      {:postgrex, ">= 0.0.0"},
+      # Phoenix Framework
+      {:phoenix, "~> 1.7.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_dashboard, "~> 0.8.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.19.0"},
-      {:phoenix, "~> 1.7.7"},
-      {:plug_cowboy, "~> 2.5"},
-      {:postgrex, ">= 0.0.0"},
-      {:swoosh, "~> 1.3"},
+      # Node
+      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
+      # Telemetry
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-
+      # Utils
+      {:finch, "~> 0.13"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:gettext, "~> 0.20"},
+      {:jason, "~> 1.2"},
+      {:plug_cowboy, "~> 2.5"},
+      {:swoosh, "~> 1.3"},
+      {:tarams, "~> 1.7"},
+      # CI & CD
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       # Membrane Framework
       {:membrane_core, "~> 0.10"},
       {:membrane_rtmp_plugin, "~> 0.9.1"},
@@ -68,6 +75,7 @@ defmodule StreamCore.MixProject do
     [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      lint: ["credo"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
