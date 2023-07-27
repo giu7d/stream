@@ -52,9 +52,9 @@ defmodule StreamCore.MixProject do
       {:telemetry_poller, "~> 1.0"},
 
       # Membrane Framework
-      {:membrane_core, "~> 0.12.7"},
-      {:membrane_rtmp_plugin, "~> 0.14.0"},
-      {:membrane_http_adaptive_stream_plugin, "~> 0.15.0"}
+      {:membrane_core, "~> 0.10"},
+      {:membrane_rtmp_plugin, "~> 0.9.1"},
+      {:membrane_http_adaptive_stream_plugin, "~> 0.8.0"}
     ]
   end
 
