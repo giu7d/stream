@@ -1,8 +1,6 @@
 defmodule StreamCoreWeb.LiveController do
   use StreamCoreWeb, :controller
 
-  alias Plug
-
   def index(conn, %{"id" => id}) do
     path = "output/#{id}"
 

@@ -26,8 +26,7 @@
 
     <div class="flex flex-grow h-full w-full items-center justify-center">
       <!--TODO: Add comment exibition-->
-      <p class="uppercase text-white">stream</p>
-      <video id="player" controls autoplay class="Player"></video>
+      <video id="player" autoplay class="Player w-full h-full"></video>
     </div>
     <div class="flex py-6 px-4 gap-4">
       <input
@@ -46,12 +45,15 @@
 
 <script>
   var video = document.getElementById('player');
-  var videoSrc = window.location.origin + `/live/index.m3u8`;
+  var src = window.location.origin + `/live/index.m3u8`;
+
   if (Hls.isSupported()) {
     var hls = new Hls();
-    hls.loadSource(videoSrc);
+    hls.loadSource(src);
     hls.attachMedia(video);
   } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = videoSrc;
+    video.src = src;
   }
+
+  video.play()
 </script>
