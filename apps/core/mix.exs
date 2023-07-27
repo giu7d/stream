@@ -49,7 +49,12 @@ defmodule StreamCore.MixProject do
       {:swoosh, "~> 1.3"},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 1.0"}
+      {:telemetry_poller, "~> 1.0"},
+
+      # Membrane Framework
+      {:membrane_core, "~> 0.12.7"},
+      {:membrane_rtmp_plugin, "~> 0.14.0"},
+      {:membrane_http_adaptive_stream_plugin, "~> 0.15.0"}
     ]
   end
 
