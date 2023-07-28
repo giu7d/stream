@@ -1,10 +1,11 @@
-<section class="flex flex-grow h-screen w-screen items-center justify-center overflow-hidden">
-  <div class="flex flex-col h-screen w-screen md:w-3/4 md:h-3/4 lg:w-1/2 lg:h-1/2  md:rounded-3xl md:shadow-xl bg-gradient-to-br from-neutral-700 to-neutral-900 overflow-hidden">
+<section class="flex flex-grow flex-col h-screen w-scren items-center justify-center overflow-hidden">
+  <div class="absolute flex flex-col h-screen w-screen md:w-3/4 md:h-3/4 lg:w-1/2 lg:h-1/2 md:rounded-3xl md:shadow-xl bg-gradient-to-br from-neutral-700 to-neutral-900 overflow-hidden">
+    <video id="player" class="object-cover h-screen" autoplay muted></video>
+  </div>
+  <div class="absolute flex flex-col h-screen w-screen md:w-3/4 md:h-3/4 lg:w-1/2 lg:h-1/2">
     <div class="flex py-6 px-4 items-center justify-between">
       <div class="flex items-center gap-4">
         <!--<button class="h-10 w-10 overflow-hidden rounded-full bg-neutral-500 opacity-50 text-white">
-          -
-        TODO: Add icon
          <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
         </button>-->
         <div class="flex items-center gap-2">
@@ -16,27 +17,23 @@
           <span class="text-xs text-white font-semibold">Giuseppe Setem</span>
         </div>
       </div>
-      <div class="flex flex-grow-0 gap-2 py-1 px-2 overflow-hidden rounded-lg bg-neutral-700 opacity-50 text-sm text-white font-normal">
+      <div class="flex flex-grow-0 gap-2 py-1 px-2 overflow-hidden rounded-lg bg-neutral-800 opacity-75 text-sm text-white font-normal">
         <.icon name="hero-eye-solid" class="h-5 w-5" />
-        <span class="">
+        <span>
           1000
         </span>
       </div>
     </div>
-
-    <div class="flex flex-grow h-full w-full items-center justify-center">
-      <!--TODO: Add comment exibition-->
-      <video id="player" autoplay muted class="Player w-full h-full"></video>
-    </div>
+    <div class="flex flex-grow h-full w-full items-center justify-center"></div>
     <div class="flex py-6 px-4 gap-4">
       <input
         type="text"
         name="stream_comment"
         id="stream_comment"
         placeholder="Type your comment..."
-        class="px-6 py-3 flex flex-grow rounded-lg bg-opacity-25 bg-neutral-700 placeholder:text-neutral-500 text-white text-sm border-none"
+        class="px-6 py-3 flex flex-grow rounded-lg bg-neutral-800 bg-opacity-75 placeholder:text-neutral-400 text-white text-sm border-none"
       />
-      <button class="h-11 w-11 aspect-square overflow-hidden rounded-full bg-opacity-25 bg-neutral-700 text-red-400">
+      <button class="h-11 w-11 aspect-square overflow-hidden rounded-full bg-neutral-800 bg-opacity-75 text-red-500">
         <.icon name="hero-heart-solid" class="h-5 w-5" />
       </button>
     </div>
