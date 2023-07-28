@@ -5,11 +5,11 @@ defmodule StreamCore.LiveStream do
   alias Membrane.HTTPAdaptiveStream.{Sink, SinkBin}
   alias Membrane.RTMP.SourceBin
 
-  @required_keys ~w()a
-  @optional_keys ~w(socket)a
+  @required_keys []
+  @optional_keys [:socket]
   @default_keys [is_live?: false, viewer_count: 0]
 
-  defstruct(@required_keys ++ @optional_keys ++ @default_keys)
+  defstruct @required_keys ++ @optional_keys ++ @default_keys
 
   @type t :: %__MODULE__{
           viewer_count: non_neg_integer(),
@@ -31,12 +31,10 @@ defmodule StreamCore.LiveStream do
       mode: :live,
       hls_mode: :muxed_av,
       persist?: false,
-      storage: %Membrane.HTTPAdaptiveStream.Storages.FileStorage{directory: @stream_output_dir}
-      # TODO: Create storage service
-      # storage: %Viewbox.FileStorage{
-      #   location: @stream_output_dir,
-      #   socket: socket
-      # }
+      storage: %StreamCore.FileStorage{
+        location: @stream_output_dir,
+        socket: socket
+      }
     }
 
     segment_duration = %Sink.SegmentDuration{
