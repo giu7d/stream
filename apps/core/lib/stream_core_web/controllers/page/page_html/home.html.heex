@@ -45,7 +45,7 @@
 
 <script>
   var video = document.getElementById('player');
-  var src = window.location.origin + `/live/index.m3u8`;
+  var src = window.location.origin + `/video/index.m3u8`;
 
   if (Hls.isSupported()) {
     var hls = new Hls();
@@ -55,5 +55,6 @@
     video.src = src;
   }
 
+  video.onclick = function() { video.play() };
   video.play()
 </script>

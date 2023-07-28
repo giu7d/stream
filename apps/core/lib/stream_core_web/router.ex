@@ -18,7 +18,7 @@ defmodule StreamCoreWeb.Router do
     pipe_through(:browser)
 
     get("/", PageController, :home)
-    get("/live/:id", LiveController, :index)
+    get("/video/:id", VideoController, :index)
   end
 
   # Other scopes may use custom stacks.

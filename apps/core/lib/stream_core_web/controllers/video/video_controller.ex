@@ -1,4 +1,4 @@
-defmodule StreamCoreWeb.LiveController do
+defmodule StreamCoreWeb.VideoController do
   use StreamCoreWeb, :controller
 
   def index(conn, %{"id" => id}) do
