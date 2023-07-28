@@ -7,8 +7,8 @@ defmodule StreamCore.Application do
 
   alias Membrane.RTMP.Source.TcpServer
 
-  @port 9006
-  @local_ip {127, 0, 0, 1}
+  @port Application.compile_env(:stream_core, :stream_port, 9006)
+  @host Application.compile_env(:stream_core, :stream_host, {127, 0, 0, 1})
 
   @impl true
   def start(_type, _args) do
@@ -18,10 +18,16 @@ defmodule StreamCore.Application do
         :binary,
         packet: :raw,
         active: false,
-        ip: @local_ip
+        ip: @host
       ],
       socket_handler: fn socket ->
-        StreamCore.LiveStream.start_link(socket: socket)
+        Agent.update(StreamCore.SocketAgent, fn sockets ->
+          Map.put(sockets, socket, %StreamCore.LiveStream{socket: socket})
+        end)
+
+        {:ok, _supervisor_pid, pipeline_pid} = StreamCore.LiveStream.start_link(socket: socket)
+
+        {:ok, pipeline_pid}
       end
     }
 
@@ -30,6 +36,11 @@ defmodule StreamCore.Application do
       %{
         id: TcpServer,
         start: {TcpServer, :start_link, [tcp_server_options]}
+      },
+      # Start Socket Agent
+      %{
+        id: StreamCore.SocketAgent,
+        start: {Agent, :start_link, [fn -> %{} end, [name: StreamCore.SocketAgent]]}
       },
       # Start the Telemetry supervisor
       StreamCoreWeb.Telemetry,

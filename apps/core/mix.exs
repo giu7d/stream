@@ -59,9 +59,9 @@ defmodule StreamCore.MixProject do
       # CI & CD
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       # Membrane Framework
-      {:membrane_core, "~> 0.10"},
-      {:membrane_rtmp_plugin, "~> 0.9.1"},
-      {:membrane_http_adaptive_stream_plugin, "~> 0.8.0"}
+      {:membrane_core, "~> 0.11.2"},
+      {:membrane_rtmp_plugin, "~> 0.12.1"},
+      {:membrane_http_adaptive_stream_plugin, "~> 0.12.0"}
     ]
   end
 
