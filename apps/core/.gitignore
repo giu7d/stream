@@ -35,3 +35,5 @@ stream_core-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Disable video segments been uploaded to github
+/output/
