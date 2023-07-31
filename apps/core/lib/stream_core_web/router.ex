@@ -17,7 +17,7 @@ defmodule StreamCoreWeb.Router do
   scope "/", StreamCoreWeb do
     pipe_through(:browser)
 
-    get("/", PageController, :home)
+    live("/", LiveStreamLive, :new)
   end
 
   scope "/api", StreamCoreWeb do

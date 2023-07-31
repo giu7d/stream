@@ -9,8 +9,6 @@ defmodule StreamCore.FileStorage do
           socket: port()
         }
 
-  alias StreamCore.LiveStream
-
   @stream_output_file Application.compile_env(:stream_core, :stream_output_file, "index.m3u8")
   @stream_live_file Application.compile_env(:stream_core, :stream_live_file, "live.m3u8")
   @stream_live_dir Application.compile_env(:stream_core, :stream_live_dir, "live")
