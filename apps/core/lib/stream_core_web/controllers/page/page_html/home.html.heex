@@ -42,7 +42,7 @@
 
 <script>
   var video = document.getElementById('player');
-  var src = window.location.origin + `/video/index.m3u8`;
+  var src = window.location.origin + `/api/stream/index.m3u8`;
 
   if (Hls.isSupported()) {
     var hls = new Hls();

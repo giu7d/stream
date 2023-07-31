@@ -18,13 +18,13 @@ defmodule StreamCoreWeb.Router do
     pipe_through(:browser)
 
     get("/", PageController, :home)
-    get("/video/:id", VideoController, :index)
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", StreamCoreWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", StreamCoreWeb do
+    pipe_through(:api)
+
+    get("/stream/:filename", StreamController, :index)
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:stream_core, :dev_routes) do
