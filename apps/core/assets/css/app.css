@@ -2,4 +2,45 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* This file is for your main application CSS */
+@keyframes like-animation {
+  0% {
+    transform: translate(0, 0) rotateZ(10deg);
+  }
+  25% {
+    transform: translate(10px, -50px) rotateZ(-60deg);
+  }
+  50% {
+    transform: translate(-5px, -100px) rotateZ(40deg);
+  }
+  75% {
+    transform: translate(6px, -150px) rotateZ(-45deg);
+  }
+  100% {
+    transform: translate(-8px, -200px) rotateZ(10deg);
+  }
+}
+
+.like {
+  animation: like-animation 1s linear infinite;
+}
+
+/* TODO: Remove later, this will be replace by socket clicks */
+.like:nth-child(1) {
+  animation: like-animation 1.2s linear infinite;
+}
+
+.like:nth-child(2) {
+  animation: like-animation 1.4s linear infinite;
+}
+
+.like:nth-child(3) {
+  animation: like-animation 1.6s linear infinite;
+}
+
+.like:nth-child(4) {
+  animation: like-animation 1.8s linear infinite;
+}
+
+.like:nth-child(5) {
+  animation: like-animation 2s linear infinite;
+}
