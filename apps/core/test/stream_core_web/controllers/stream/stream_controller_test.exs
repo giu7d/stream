@@ -1,9 +1,10 @@
-defmodule StreamCoreWeb.StControllerTest do
+defmodule StreamCoreWeb.StreamControllerTest do
   use StreamCoreWeb.ConnCase
 
   describe "GET /api/stream/:filename" do
     test "returns File if file found", %{conn: conn} do
       response = get(conn, ~p"/api/stream/test.m3u8")
+
       assert response.resp_body == "This is a test file content\n"
       assert response.status == 200
     end
