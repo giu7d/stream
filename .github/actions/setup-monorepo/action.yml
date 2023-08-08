@@ -49,10 +49,10 @@ runs:
 
     - name: ♻️ Restore Mix cache
       uses: actions/cache@v3
-        id: mix-cache
-        with:
-          path: |
-            apps/core/deps
-            apps/core/_build
-            apps/core/priv/plts
-          key: mix-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}
+      id: mix-cache
+      with:
+        path: |
+          apps/core/deps
+          apps/core/_build
+          apps/core/priv/plts
+        key: mix-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}
