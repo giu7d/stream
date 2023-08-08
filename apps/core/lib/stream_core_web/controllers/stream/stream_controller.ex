@@ -14,8 +14,11 @@ defmodule StreamCoreWeb.StreamController do
     with {:ok, params} <- Validator.cast(params, @index_stream_params),
          path <- format_path(params) do
       case File.exists?(path) do
-        true -> Plug.Conn.send_file(conn, 200, path)
-        false -> Plug.Conn.send_resp(conn, 404, "File not found")
+        true ->
+          send_file(conn, 200, path)
+
+        false ->
+          send_resp(conn, 404, "File not found")
       end
     end
   end
