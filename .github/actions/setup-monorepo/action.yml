@@ -28,13 +28,6 @@ runs:
         elixir-version: ${{ inputs.elixir-version }}
         otp-version: ${{ inputs.otp-version }}
 
-    - name: 📦 Install OS dependencies
-      shell: bash
-      run: |
-        sudo apt-get install -y \
-          libsrtp2-dev libavcodec-dev libavformat-dev \
-          libavutil-dev pkg-config
-
     - name: 📦 Install Mix dependencies
       working-directory: apps/core
       if: steps.mix-cache.outputs.cache-hit != 'true'
