@@ -1,0 +1,56 @@
+name: Setup Monorepo
+description: Prepare and install everything for the monorepo
+
+inputs:
+  node-version:
+    description: Version of Node to use
+    default: 16.13.0
+
+  otp-version:
+    description: Version of OTP to use
+    default: 25
+
+  elixir-version:
+    description: Version of Elixir to use
+    default: 1.14.3
+
+runs:
+  using: composite
+  steps:
+    - name: 🏗 Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: 🏗 Setup Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: ${{ inputs.elixir-version }}
+        otp-version: ${{ inputs.otp-version }}
+
+    - name: 📦 Install OS dependencies
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang-format portaudio19-dev ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libmad0-dev
+
+    - name: 📦 Install Mix dependencies
+      working-directory: apps/core
+      if: steps.mix-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        mkdir -p priv/plts
+        mix local.rebar --force
+        mix local.hex --force
+        mix deps.get
+        mix deps.compile
+
+    - name: ♻️ Restore Mix cache
+      uses: actions/cache@v3
+      id: mix-cache
+      with:
+        path: |
+          apps/core/deps
+          apps/core/_build
+          apps/core/priv/plts
+        key: mix-${{ runner.os }}-${{ hashFiles('**/mix.lock') }}
