@@ -28,18 +28,11 @@ runs:
         elixir-version: ${{ inputs.elixir-version }}
         otp-version: ${{ inputs.otp-version }}
 
-    # - name: 📦 Install OS dependencies
-    #   shell: bash
-    #   run: |
-    #     sudo apt-get install -y --fix-missing \
-    #       libsrtp2-dev libavcodec-dev libavformat-dev \
-    #       libavutil-dev pkg-config ffmpeg
-
     - name: 📦 Install OS dependencies
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang-format portaudio19-dev ffmpeg libavutil-dev libswresample-dev libmad0-dev
+        sudo apt-get install -y clang-format portaudio19-dev ffmpeg libavcodec-dev libavutil-dev libswresample-dev libmad0-dev
 
     - name: 📦 Install Mix dependencies
       working-directory: apps/core
