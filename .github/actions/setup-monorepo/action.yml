@@ -32,7 +32,7 @@ runs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang-format portaudio19-dev ffmpeg libavcodec-dev libavutil-dev libswresample-dev libmad0-dev
+        sudo apt-get install -y clang-format portaudio19-dev ffmpeg libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libmad0-dev
 
     - name: 📦 Install Mix dependencies
       working-directory: apps/core
