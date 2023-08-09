@@ -67,7 +67,6 @@ defmodule StreamCore.FileStorage do
   end
 
   defp build_output_folder(state, name) do
-    # TODO: Add user support
     # %LiveStream{user: user} =
     #   LiveStream.update_live_stream(state.socket, fn _ -> %{is_live?: true} end)
     # path = [state.location, Integer.to_string(user.id), @stream_live_dir, name] |> Path.join()
@@ -80,7 +79,6 @@ defmodule StreamCore.FileStorage do
     path
   end
 
-  # TODO: Improve segmentation logic
   defp prepare_live_manifest(contents) do
     re_segments = ~r/\#EXT-X-PROGRAM-DATE-TIME:.*\n\#EXTINF:.*,\nmuxed_segment.*\n?/
     re_sequence = ~r/\#EXT-X-MEDIA-SEQUENCE:\d+/
