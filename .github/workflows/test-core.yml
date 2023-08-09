@@ -27,6 +27,10 @@ jobs:
       - name: 🏗 Setup monorepo
         uses: ./.github/actions/setup-monorepo
 
+      - name: 💅 Run lint
+        working-directory: apps/core
+        run: mix lint
+
       - name: 🧪 Run test
         working-directory: apps/core
         run: mix test --trace --slowest 10
