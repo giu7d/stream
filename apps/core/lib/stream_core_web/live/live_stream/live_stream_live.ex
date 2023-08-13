@@ -1,7 +1,7 @@
 defmodule StreamCoreWeb.LiveStreamLive do
   use StreamCoreWeb, :live_view
 
-  @stream_live_file Application.compile_env(:viewbox, :stream_live_file, "live.m3u8")
+  @stream_live_file Application.compile_env(:stream_core, :stream_live_file, "live.m3u8")
 
   def mount(_params, _session, socket) do
     {:ok,

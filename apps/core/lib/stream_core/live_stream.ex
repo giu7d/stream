@@ -185,7 +185,7 @@ defmodule StreamCore.LiveStream do
 
     #   user ->
     #     Phoenix.PubSub.broadcast(
-    #       Viewbox.PubSub,
+    #       StreamCore.PubSub,
     #       "live:#{user.username}",
     #       live_stream
     #     )
