@@ -1,4 +1,5 @@
 defmodule StreamCore.UsersTest do
+  alias StreamCore.Users.User
   alias StreamCore.Users
 
   use StreamCoreWeb.ConnCase
@@ -16,6 +17,62 @@ defmodule StreamCore.UsersTest do
     test "does not create user if attribute missing" do
       user_input = gen_user_attributes(%{password: ''})
       assert {:error, _} = Users.create_user(user_input)
+    end
+  end
+
+  describe "update_user/1" do
+    test "update user email successfully" do
+      user = insert(:user)
+      new_user_email = gen_email()
+
+      assert {:ok, updated_user} = Users.update_user(user, %{email: new_user_email})
+
+      assert equals(updated_user.email, new_user_email)
+    end
+
+    test "update username successfully" do
+      user = insert(:user)
+      new_username = gen_username()
+
+      assert {:ok, updated_user} = Users.update_user(user, %{username: new_username})
+
+      assert equals(updated_user.username, new_username)
+    end
+
+    test "does not update user email if format is invalid" do
+      user = insert(:user)
+      assert {:error, _} = Users.update_user(user, %{email: "invalid_email"})
+    end
+
+    test "does not update username if format is invalid" do
+      user = insert(:user)
+      assert {:error, _} = Users.update_user(user, %{username: ""})
+    end
+
+    test "does not update password" do
+      user = insert(:user)
+      assert {:ok, updated_user} = Users.update_user(user, %{password: "wrong_password"})
+      assert User.valid_password?(updated_user, "valid_password")
+    end
+  end
+
+  describe "update_user_password/1" do
+    test "update password successfully" do
+      user = insert(:user)
+
+      assert {:ok, updated_user} =
+               Users.update_user_password(user, "valid_password", %{password: "updated_password"})
+
+      assert User.valid_password?(updated_user, "updated_password")
+    end
+
+    test "does not update password if it is wrong" do
+      user = insert(:user)
+
+      assert {:error, updated_user} =
+               Users.update_user_password(user, "wrong_password", %{password: "updated_password"})
+
+      refute User.valid_password?(updated_user, "updated_password")
     end
   end
 

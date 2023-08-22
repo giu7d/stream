@@ -49,14 +49,11 @@ defmodule StreamCore.Users.User do
 
   It requires the username to change otherwise an error is added.
   """
-  def username_changeset(user, attrs, opts \\ []) do
+  def update_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:username])
+    |> cast(attrs, [:username, :email])
     |> validate_username(opts)
-    |> case do
-      %{changes: %{username: _}} = changeset -> changeset
-      %{} = changeset -> add_error(changeset, :username, "did not change")
-    end
+    |> validate_email(opts)
   end
 
   @doc """

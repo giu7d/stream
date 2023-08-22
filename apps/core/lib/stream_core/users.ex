@@ -11,6 +11,27 @@ defmodule StreamCore.Users do
     |> Repo.insert()
   end
 
+  def update_user(%User{} = user, attrs \\ %{}) do
+    user
+    |> User.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_user_password(%User{} = user, password, attrs) do
+    changeset =
+      user
+      |> User.password_changeset(attrs)
+      |> User.validate_current_password(password)
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:user, changeset)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{user: user}} -> {:ok, user}
+      {:error, :user, changeset, _} -> {:error, changeset}
+    end
+  end
+
   def list_users(), do: {:ok, Repo.all(User)}
 
   def delete_user(%User{} = user) do
