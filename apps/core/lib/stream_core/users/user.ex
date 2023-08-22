@@ -45,7 +45,7 @@ defmodule StreamCore.Users.User do
   end
 
   @doc """
-  A user changeset for changing the username.
+  A user changeset for updating username and email.
 
   It requires the username to change otherwise an error is added.
   """
