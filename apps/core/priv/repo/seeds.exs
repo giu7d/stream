@@ -1,11 +1,10 @@
-# Script for populating the database. You can run it as:
-#
-#     mix run priv/repo/seeds.exs
-#
-# Inside the script, you can read and write to any of your
-# repositories directly:
-#
-#     StreamCore.Repo.insert!(%StreamCore.SomeSchema{})
-#
-# We recommend using the bang functions (`insert!`, `update!`
-# and so on) as they will fail if something goes wrong.
+alias StreamCore.Users.User
+alias StreamCore.Repo
+
+%User{}
+|> User.registration_changeset(%{
+  username: "test",
+  email: "dev@domain.com",
+  password: "password"
+})
+|> Repo.insert!()
