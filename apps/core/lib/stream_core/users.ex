@@ -4,8 +4,6 @@ defmodule StreamCore.Users do
   alias StreamCore.Users.Follower
   alias StreamCore.Repo
 
-  import Ecto.Query
-
   #
   # Users
   #
