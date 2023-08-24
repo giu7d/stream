@@ -12,4 +12,6 @@ defmodule StreamCore.Mocks do
       password: gen_password()
     })
   end
+
+  def gen_token, do: :crypto.strong_rand_bytes(32)
 end

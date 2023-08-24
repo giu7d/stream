@@ -1,4 +1,5 @@
 defmodule StreamCore.UsersTest do
+  alias StreamCore.Users.UserToken
   alias StreamCore.Users.User
   alias StreamCore.Users
 
@@ -8,6 +9,9 @@ defmodule StreamCore.UsersTest do
   import StreamCore.Factories
   import StreamCore.Helpers
 
+  #
+  # Users
+  #
   describe "create_user/1" do
     test "creates user successfully " do
       user_input = gen_user_attributes()
@@ -99,31 +103,34 @@ defmodule StreamCore.UsersTest do
     end
   end
 
-  describe "find_user_by/1" do
+  describe "find_user/2" do
     test "finds user by id successfully" do
       user = insert(:user)
-      assert {:ok, result} = Users.find_user_by(%{id: user.id})
+      assert {:ok, result} = Users.find_user(%{id: user.id})
       assert equals(user.id, result.id)
     end
 
     test "finds user by email successfully" do
       user = insert(:user)
-      assert {:ok, result} = Users.find_user_by(%{email: user.email})
+      assert {:ok, result} = Users.find_user(%{email: user.email})
       assert equals(user.id, result.id)
     end
 
     test "finds user by username successfully" do
       user = insert(:user)
-      assert {:ok, result} = Users.find_user_by(%{username: user.username})
+      assert {:ok, result} = Users.find_user(%{username: user.username})
       assert equals(user.id, result.id)
     end
 
     test "returns error if user not found" do
       insert(:user)
-      assert {:error, :not_found} = Users.find_user_by(%{email: "wrong@mail.com"})
+      assert {:error, :not_found} = Users.find_user(%{email: "wrong@mail.com"})
     end
   end
 
+  #
+  # Followers
+  #
   describe "add_follower/1" do
     test "follows streamer successfully" do
       user_follower = insert(:user)
@@ -225,6 +232,46 @@ defmodule StreamCore.UsersTest do
                  follower_id: user_follower.id,
                  streamer_id: 99_999
                })
+    end
+  end
+
+  #
+  # User Session Tokens
+  #
+  describe "create_user_session_token/1" do
+    test "creates user session token successfully" do
+      user = insert(:user)
+      assert {:ok, %UserToken{}} = Users.create_user_session_token(user)
+    end
+  end
+
+  describe "delete_user_session_token/1" do
+    test "deletes user session token successfully" do
+      token = insert(:user_token)
+      assert {:ok, 1} = Users.delete_user_session_token(token.token)
+      assert {:error, :not_found} = Users.find_user_by_session_token(token.token)
+    end
+
+    test "deletes expired tokens successfully" do
+      token = insert(:user_token, %{inserted_at: ~N[2000-01-01 01:00:00.000000]})
+      assert {:ok, 1} = Users.delete_user_session_token(token.token)
+    end
+
+    test "does not delete tokens if token does not exists" do
+      bad_token = gen_token()
+      assert {:error, :not_found} = Users.delete_user_session_token(bad_token)
+    end
+  end
+
+  describe "find_user_by_session_token/2" do
+    test "finds user from session token successfully" do
+      token = insert(:user_token)
+      assert {:ok, %User{}} = Users.find_user_by_session_token(token.token)
+    end
+
+    test "does not find user from expired session token" do
+      token = insert(:user_token, %{inserted_at: ~N[2000-01-01 01:00:00.000000]})
+      assert {:error, :not_found} = Users.find_user_by_session_token(token.token)
     end
   end
 end

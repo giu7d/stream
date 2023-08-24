@@ -1,14 +1,16 @@
 defmodule StreamCore.Factories do
+  alias StreamCore.Users.UserToken
   alias StreamCore.Users.Follower
   alias StreamCore.Users.User
-  alias StreamCore.Mocks
 
   use ExMachina.Ecto, repo: StreamCore.Repo
 
+  import StreamCore.Mocks
+
   def user_factory do
-    email = Mocks.gen_email()
-    username = Mocks.gen_username()
-    password = Mocks.gen_password()
+    email = gen_email()
+    username = gen_username()
+    password = gen_password()
 
     %User{
       email: email,
@@ -25,6 +27,17 @@ defmodule StreamCore.Factories do
     %Follower{
       follower: user_follower,
       streamer: user_streamer
+    }
+  end
+
+  def user_token_factory do
+    user = build(:user)
+    token = gen_token()
+
+    %UserToken{
+      user: user,
+      context: "session",
+      token: token
     }
   end
 end
