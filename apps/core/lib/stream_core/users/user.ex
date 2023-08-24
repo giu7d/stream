@@ -1,5 +1,10 @@
 defmodule StreamCore.Users.User do
+  alias StreamCore.Repo
+  alias StreamCore.Users.User
+
   use Ecto.Schema
+
+  import Ecto.Query
   import Ecto.Changeset
 
   schema "users" do
@@ -168,4 +173,22 @@ defmodule StreamCore.Users.User do
       changeset
     end
   end
+
+  @doc """
+  Allows User Repo to be queried by id, email, or username
+  """
+  def query_by_params(params, preloads) do
+    from(user in User)
+    |> Repo.with_filter(params, &handle_query_filters/2)
+    |> preload(^preloads)
+  end
+
+  defp handle_query_filters({_, nil}, query), do: query
+
+  defp handle_query_filters({:id, data}, query), do: where(query, [user], user.id == ^data)
+
+  defp handle_query_filters({:email, data}, query), do: where(query, [user], user.email == ^data)
+
+  defp handle_query_filters({:username, data}, query),
+    do: where(query, [user], user.username == ^data)
 end
