@@ -1,10 +1,14 @@
 defmodule StreamCore.Users do
+  alias StreamCore.Users.UserToken
   alias StreamCore.Users.User
   alias StreamCore.Users.Follower
   alias StreamCore.Repo
 
   import Ecto.Query
 
+  #
+  # Users
+  #
   def create_user(attrs) do
     %User{}
     |> User.registration_changeset(attrs)
@@ -38,9 +42,9 @@ defmodule StreamCore.Users do
     Repo.delete(user)
   end
 
-  def find_user_by(params, preloads \\ []) do
-    params
-    |> user_base_query(preloads)
+  def find_user(search_params, preloads \\ []) do
+    search_params
+    |> User.query_by_params(preloads)
     |> Repo.one()
     |> case do
       %User{} = user -> {:ok, user}
@@ -49,23 +53,15 @@ defmodule StreamCore.Users do
     end
   end
 
-  defp user_base_query(params, preloads) do
-    from(user in User)
-    |> Repo.with_filter(params, &handle_filters/2)
-    |> preload(^preloads)
-  end
-
-  defp handle_filters({_, nil}, query), do: query
-
-  defp handle_filters({:id, data}, query), do: where(query, [user], user.id == ^data)
-
-  defp handle_filters({:email, data}, query), do: where(query, [user], user.email == ^data)
-
-  defp handle_filters({:username, data}, query), do: where(query, [user], user.username == ^data)
-
+  #
+  # Followers
+  #
   def add_follower(%{follower_id: follower_id, streamer_id: streamer_id}) do
-    %Follower{follower_id: follower_id, streamer_id: streamer_id}
-    |> Follower.changeset()
+    %Follower{}
+    |> Follower.changeset(%{
+      follower_id: follower_id,
+      streamer_id: streamer_id
+    })
     |> Repo.insert()
   end
 
@@ -84,6 +80,40 @@ defmodule StreamCore.Users do
     |> case do
       %Follower{} -> remove_follower(params)
       _ -> add_follower(params)
+    end
+  end
+
+  #
+  # User Session Tokens
+  #
+  def create_user_session_token(%User{} = user) do
+    %UserToken{}
+    |> UserToken.changeset(%{
+      user_id: user.id,
+      context: "session"
+    })
+    |> Repo.insert()
+  end
+
+  def delete_user_session_token(token) do
+    token
+    |> UserToken.query_by_token_and_context("session")
+    |> Repo.delete_all()
+    |> case do
+      {0, _} -> {:error, :not_found}
+      {count, _} -> {:ok, count}
+    end
+  end
+
+  def find_user_by_session_token(token, preloads \\ []) do
+    token
+    |> UserToken.query_by_verified_session_token()
+    |> Repo.one()
+    |> Repo.preload(preloads)
+    |> case do
+      %User{} = user -> {:ok, user}
+      nil -> {:error, :not_found}
+      _ -> {:error, :unexpected}
     end
   end
 end
