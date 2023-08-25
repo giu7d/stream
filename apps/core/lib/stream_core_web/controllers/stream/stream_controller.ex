@@ -1,13 +1,14 @@
 defmodule StreamCoreWeb.StreamController do
-  use StreamCoreWeb, :controller
+  alias StreamCoreWeb.Validator
 
-  alias StreamCore.Validator
+  use StreamCoreWeb, :controller
 
   @stream_output_dir Application.compile_env(:stream_core, :stream_output_dir, "output")
   @stream_live_dir Application.compile_env(:stream_core, :stream_live_dir, "live")
 
   @index_stream_params %{
-    filename: [type: :string]
+    filename: [type: :string],
+    user_id: [type: :string]
   }
 
   def index(conn, params) do
@@ -23,8 +24,8 @@ defmodule StreamCoreWeb.StreamController do
     end
   end
 
-  defp format_path(%{filename: filename}) do
-    [@stream_output_dir, @stream_live_dir, filename]
+  defp format_path(%{user_id: user_id, filename: filename}) do
+    [@stream_output_dir, user_id, @stream_live_dir, filename]
     |> Path.join()
     |> Path.expand()
   end

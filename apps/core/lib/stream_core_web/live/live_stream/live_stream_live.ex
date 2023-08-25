@@ -1,22 +1,41 @@
 defmodule StreamCoreWeb.LiveStreamLive do
+  alias StreamCore.Users
+  alias StreamCore.LiveStream
+  alias StreamCoreWeb.Validator
+
   use StreamCoreWeb, :live_view
 
-  @stream_live_file Application.compile_env(:stream_core, :stream_live_file, "live.m3u8")
+  @stream_output_file Application.compile_env(:stream_core, :stream_output_file, "live.m3u8")
 
-  def mount(_params, _session, socket) do
-    {:ok,
-     assign(
-       socket,
-       stream_live_file: @stream_live_file,
-       stream_is_live?: true,
-       stream_views: 1000,
-       stream_user: %{
-         name: "Giuseppe Setem",
-         avatar_url: "https://avatars.githubusercontent.com/u/30274817?v=4"
-       }
-     )}
+  @live_stream_params %{
+    username: [type: :string]
+  }
+  def mount(params, _session, socket) do
+    with {:ok, params} <- Validator.cast(params, @live_stream_params),
+         {:ok, user} <- Users.find_user(%{username: params.username}),
+         live_stream <- LiveStream.find_live_stream(username: params.username) do
+      Phoenix.PubSub.subscribe(StreamCore.PubSub, "live:#{params.username}")
+
+      {:ok,
+       assign(
+         socket,
+         stream: live_stream,
+         user: user,
+         stream_output_file: @stream_output_file,
+         stream_is_live?: true,
+         stream_views: 1000,
+         stream_user: %{
+           name: user.username,
+           avatar_url: "https://avatars.githubusercontent.com/u/30274817?v=4"
+         }
+       )}
+    end
   end
 
-  def unmount(_reason, _) do
+  def unmount(_reason, params) do
+    with {:ok, params} <- Validator.cast(params, @live_stream_params),
+         live_stream <- LiveStream.find_live_stream(username: params.username) do
+      IO.inspect(live_stream)
+    end
   end
 end

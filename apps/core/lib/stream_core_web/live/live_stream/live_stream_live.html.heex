@@ -54,13 +54,21 @@
 
 <script>
   const video = document.getElementById('player')
-  const src = `${window.location.origin}/api/stream/<%= @stream_live_file %>`
+  const src = `${window.location.origin}/api/stream/<%= @user.id %>/<%= @stream_output_file %>`
 
   const isHLSSupported = Hls.isSupported()
   const isVideoTypeSupported = video.canPlayType('application/vnd.apple.mpegurl')
 
   if (isHLSSupported) {
-    const hls = new Hls()
+    const hls = new Hls({
+      enableWorker: true,
+      maxBufferLength: 1,
+      liveBackBufferLength: 0,
+      liveSyncDuration: 1,
+      liveMaxLatencyDuration: 5,
+      liveDurationInfinity: true,
+      highBufferWatchdogPeriod: 1,
+    })
     hls.loadSource(src)
     hls.attachMedia(video)
   } else if (isVideoTypeSupported) {
