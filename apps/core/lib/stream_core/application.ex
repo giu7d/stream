@@ -5,6 +5,7 @@ defmodule StreamCore.Application do
 
   use Application
 
+  alias StreamCore.LiveStream
   alias Membrane.RTMP.Source.TcpServer
 
   @port Application.compile_env(:stream_core, :stream_port, 9006)
@@ -20,15 +21,7 @@ defmodule StreamCore.Application do
         active: false,
         ip: @host
       ],
-      socket_handler: fn socket ->
-        Agent.update(StreamCore.SocketAgent, fn sockets ->
-          Map.put(sockets, socket, %StreamCore.LiveStream{socket: socket})
-        end)
-
-        {:ok, _supervisor_pid, pipeline_pid} = StreamCore.LiveStream.start_link(socket: socket)
-
-        {:ok, pipeline_pid}
-      end
+      socket_handler: &handle_tcp_socket/1
     }
 
     children = [
@@ -68,5 +61,20 @@ defmodule StreamCore.Application do
   def config_change(changed, _new, removed) do
     StreamCoreWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp handle_tcp_socket(socket) do
+    Agent.update(StreamCore.SocketAgent, fn sockets ->
+      Map.put(sockets, socket, %LiveStream.Stream{socket: socket})
+    end)
+
+    {:ok, _supervisor_pid, pipeline_pid} =
+      LiveStream.start_link(
+        socket: socket,
+        validator: %LiveStream.StreamValidator{socket: socket},
+        use_ssl?: false
+      )
+
+    {:ok, pipeline_pid}
   end
 end

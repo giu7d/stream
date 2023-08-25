@@ -36,5 +36,5 @@ npm-debug.log
 /assets/node_modules/
 
 # Disable video segments been uploaded to github
-/output/live/*
-!output/live/test.m3u8
+/output/*/live/*
+!output/*/live/test.m3u8

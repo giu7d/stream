@@ -56,6 +56,9 @@ defmodule StreamCore.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:swoosh, "~> 1.3"},
       {:tarams, "~> 1.7"},
+      {:bcrypt_elixir, "~> 3.0"},
+      # Test
+      {:ex_machina, "~> 2.7.0", only: :test},
       # CI & CD
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       # Membrane Framework

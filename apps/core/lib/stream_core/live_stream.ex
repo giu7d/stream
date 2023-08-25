@@ -1,28 +1,18 @@
 defmodule StreamCore.LiveStream do
   use Membrane.Pipeline
 
-  alias StreamCore.LiveStream
+  alias StreamCore.LiveStream.Stream
   alias Membrane.HTTPAdaptiveStream.{Sink, SinkBin}
   alias Membrane.RTMP.SourceBin
-
-  @required_keys []
-  @optional_keys [:socket]
-  @default_keys [is_live?: false, viewer_count: 0]
-
-  defstruct @required_keys ++ @optional_keys ++ @default_keys
-
-  @type t :: %__MODULE__{
-          viewer_count: non_neg_integer(),
-          socket: port(),
-          is_live?: boolean()
-        }
 
   @stream_output_dir Application.compile_env(:stream_core, :stream_output_dir, "output")
 
   @impl true
-  def handle_init(_ctx, socket: socket) do
+  def handle_init(_ctx, socket: socket, validator: validator, use_ssl?: use_ssl?) do
     source_bin = %SourceBin{
-      socket: socket
+      socket: socket,
+      validator: validator,
+      use_ssl?: use_ssl?
     }
 
     sink_bin = %SinkBin{
@@ -135,7 +125,7 @@ defmodule StreamCore.LiveStream do
     {[], state}
   end
 
-  def get_live_streams() do
+  def list_live_streams() do
     Agent.get(
       StreamCore.SocketAgent,
       fn sockets ->
@@ -144,24 +134,25 @@ defmodule StreamCore.LiveStream do
     )
   end
 
-  # def get_live_stream(username: username) do
-  #   case get_live_streams()
-  #        |> Enum.find(fn live_stream -> live_stream.user.username == username end) do
-  #     nil -> %LiveStream{}
-  #     x -> x
-  #   end
-  # end
+  def find_live_stream(username: username) do
+    list_live_streams()
+    |> Enum.find(fn live_stream -> live_stream.user.username == username end)
+    |> case do
+      nil -> %Stream{}
+      stream -> stream
+    end
+  end
 
-  def get_live_stream(socket: socket) do
+  def find_live_stream(socket: socket) do
     case Agent.get(StreamCore.SocketAgent, fn sockets -> sockets[socket] end) do
-      nil -> %LiveStream{}
+      nil -> %Stream{}
       x -> x
     end
   end
 
-  def get_live_stream(_), do: nil
+  def find_live_stream(_), do: nil
 
-  def update_live_stream(nil, _), do: %LiveStream{}
+  def update_live_stream(nil, _), do: %Stream{}
 
   def update_live_stream(socket, update_fn) when is_function(update_fn, 1) do
     Agent.update(StreamCore.SocketAgent, fn sockets ->
@@ -177,56 +168,20 @@ defmodule StreamCore.LiveStream do
       end
     end)
 
-    live_stream = get_live_stream(socket: socket)
+    live_stream = find_live_stream(socket: socket)
 
-    # case live_stream.user do
-    #   nil ->
-    #     nil
+    case live_stream.user do
+      nil ->
+        nil
 
-    #   user ->
-    #     Phoenix.PubSub.broadcast(
-    #       Viewbox.PubSub,
-    #       "live:#{user.username}",
-    #       live_stream
-    #     )
-    # end
+      user ->
+        Phoenix.PubSub.broadcast(
+          StreamCore.PubSub,
+          "live:#{user.username}",
+          live_stream
+        )
+    end
 
     live_stream
   end
-
-  # def get_thumbnail(user_id, vod_id) do
-  #   dir =
-  #     case vod_id do
-  #       nil -> @stream_live_dir
-  #       vod_id -> Integer.to_string(vod_id)
-  #     end
-  #   [@stream_output_dir, Integer.to_string(user_id), dir]
-  #   |> Path.join()
-  #   |> get_thumbnail_base64()
-  # end
-
-  # defp get_thumbnail_base64(path) do
-  #   from = [path, @stream_output_file] |> Path.join()
-  #   to = [path, "thumbnail.png"] |> Path.join()
-  #   System.cmd(
-  #     "ffmpeg",
-  #     [
-  #       "-i",
-  #       from,
-  #       "-vframes",
-  #       "1",
-  #       "-s",
-  #       "1280x720",
-  #       "-ss",
-  #       "1",
-  #       to,
-  #       "-y",
-  #       "-hide_banner"
-  #     ]
-  #   )
-  #   case File.read(to) do
-  #     {:ok, content} -> Base.encode64(content)
-  #     {:error, _} -> nil
-  #   end
-  # end
 end
