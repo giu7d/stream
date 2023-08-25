@@ -1,4 +1,5 @@
 defmodule StreamCore.FileStorage do
+  alias StreamCore.LiveStream
   @behaviour Membrane.HTTPAdaptiveStream.Storage
 
   @enforce_keys [:location, :socket]
@@ -69,8 +70,11 @@ defmodule StreamCore.FileStorage do
   defp build_output_folder(state, name) do
     # %LiveStream{user: user} =
     #   LiveStream.update_live_stream(state.socket, fn _ -> %{is_live?: true} end)
-    # path = [state.location, Integer.to_string(user.id), @stream_live_dir, name] |> Path.join()
-    path = [state.location, @stream_live_dir, name] |> Path.join()
+
+    %LiveStream.Stream{user: user} =
+      LiveStream.update_live_stream(state.socket, fn _ -> %{is_live?: true} end)
+
+    path = [state.location, Integer.to_string(user.id), @stream_live_dir, name] |> Path.join()
 
     path
     |> Path.dirname()

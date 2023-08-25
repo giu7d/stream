@@ -5,6 +5,7 @@ defmodule StreamCore.Application do
 
   use Application
 
+  alias StreamCore.LiveStream
   alias Membrane.RTMP.Source.TcpServer
 
   @port Application.compile_env(:stream_core, :stream_port, 9006)
@@ -62,12 +63,17 @@ defmodule StreamCore.Application do
     :ok
   end
 
-  def handle_tcp_socket(socket) do
+  defp handle_tcp_socket(socket) do
     Agent.update(StreamCore.SocketAgent, fn sockets ->
-      Map.put(sockets, socket, %StreamCore.LiveStream{socket: socket})
+      Map.put(sockets, socket, %LiveStream.Stream{socket: socket})
     end)
 
-    {:ok, _supervisor_pid, pipeline_pid} = StreamCore.LiveStream.start_link(socket: socket)
+    {:ok, _supervisor_pid, pipeline_pid} =
+      LiveStream.start_link(
+        socket: socket,
+        validator: %LiveStream.StreamValidator{socket: socket},
+        use_ssl?: false
+      )
 
     {:ok, pipeline_pid}
   end
