@@ -32,10 +32,10 @@ defmodule StreamCoreWeb.LiveStreamLive do
     end
   end
 
-  def unmount(_reason, params) do
-    with {:ok, params} <- Validator.cast(params, @live_stream_params),
-         live_stream <- LiveStream.find_live_stream(username: params.username) do
-      IO.inspect(live_stream)
-    end
+  def unmount(_reason, _params) do
+    # with {:ok, params} <- Validator.cast(params, @live_stream_params),
+    #      live_stream <- LiveStream.find_live_stream(username: params.username) do
+    #   {:ok, live_stream}
+    # end
   end
 end
