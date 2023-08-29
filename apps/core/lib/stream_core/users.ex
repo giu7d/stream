@@ -51,6 +51,13 @@ defmodule StreamCore.Users do
     end
   end
 
+  def find_user_with_password(username, password)
+      when is_binary(username) and is_binary(password) do
+    user = Repo.get_by(User, username: username)
+
+    if User.valid_password?(user, password), do: user
+  end
+
   #
   # Followers
   #
