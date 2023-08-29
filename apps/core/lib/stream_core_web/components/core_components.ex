@@ -374,8 +374,7 @@ defmodule StreamCoreWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
           "flex rounded-lg py-3 bg-neutral-800 bg-opacity-75 placeholder:text-neutral-400 text-white text-sm border border-white border-opacity-25",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          @errors != [] && "border-orange-500 focus:border-orange-500"
         ]}
         {@rest}
       />
@@ -405,8 +404,8 @@ defmodule StreamCoreWeb.CoreComponents do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
+    <p class="flex gap-1 text-sm text-orange-500 phx-no-feedback:hidden">
+      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-4 w-4 flex-none" />
       <%= render_slot(@inner_block) %>
     </p>
     """
@@ -690,6 +689,7 @@ defmodule StreamCoreWeb.CoreComponents do
       class={[
         "flex bg-white hover:opacity-75 transition-opacity rounded-full h-10 w-full justify-center items-center text-neutral-950 font-semibold",
         "phx-submit-loading:opacity-50",
+        "disabled:opacity-50",
         @class
       ]}
       {@rest}
@@ -716,12 +716,39 @@ defmodule StreamCoreWeb.CoreComponents do
       navigate={@navigate}
       class={[
         "text-white text-opacity-100 font-bold underline cursor-pointer transition-opacity",
-        "hover:opacity-75 ",
+        "hover:opacity-75",
         @class
       ]}
     >
       <%= render_slot(@inner_block) %>
     </.link>
+    """
+  end
+
+  @doc """
+  Renders a floating container
+
+  ## Examples
+
+      <.container class="">hello world</.container>
+  """
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
+
+  def container(assigns) do
+    ~H"""
+    <section class="flex justify-center items-center h-screen w-screen">
+      <div
+        class={[
+          " flex flex-col h-screen w-screen overflow-hidden ",
+          " md:bg-gradient-to-br md:from-neutral-700 md:to-neutral-900 md:absolute md:w-5/6 md:h-auto md:rounded-3xl ",
+          " lg:flex-row lg:items-center max-w-4xl ",
+          @class
+        ]}
+      >
+        <%= render_slot(@inner_block) %>
+      </div>
+    </section>
     """
   end
 end

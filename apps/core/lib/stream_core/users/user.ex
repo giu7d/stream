@@ -50,6 +50,16 @@ defmodule StreamCore.Users.User do
   end
 
   @doc """
+  A user changeset for validating login with username and password.
+  """
+  def login_changeset(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:username, :password])
+    |> validate_username(validate_username: false)
+    |> validate_password(opts)
+  end
+
+  @doc """
   A user changeset for updating username and email.
 
   It requires the username to change otherwise an error is added.
