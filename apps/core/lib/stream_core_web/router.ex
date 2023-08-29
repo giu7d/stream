@@ -17,13 +17,16 @@ defmodule StreamCoreWeb.Router do
   scope "/", StreamCoreWeb do
     pipe_through(:browser)
 
+    live("/login", UserLoginLive, :new)
+    live("/register", UserLoginLive, :new)
     live("/:username", LiveStreamLive, :new)
   end
 
   scope "/api", StreamCoreWeb do
     pipe_through(:api)
 
-    get("/stream/:user_id/:filename", StreamController, :index)
+    get("/streams/:user_id/:filename", StreamController, :index)
+    post("/users/login", UserSessionController, :create)
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
