@@ -4,6 +4,13 @@ defmodule StreamCoreWeb.UserLoginLive do
 
   use StreamCoreWeb, :live_view
 
+  @form_params %{
+    user: %{
+      username: [type: :string],
+      password: [type: :string]
+    }
+  }
+
   def mount(_params, _session, socket) do
     username = live_flash(socket.assigns.flash, :username)
     form = to_form(%{"username" => username}, as: "user")
@@ -19,15 +26,8 @@ defmodule StreamCoreWeb.UserLoginLive do
     }
   end
 
-  @validate_form_params %{
-    user: %{
-      username: [type: :string],
-      password: [type: :string]
-    }
-  }
-
   def handle_event("validate", params, socket) do
-    with {:ok, params} <- Validator.cast(params, @validate_form_params) do
+    with {:ok, params} <- Validator.cast(params, @form_params) do
       form =
         %User{}
         |> User.login_changeset(params.user)
@@ -35,6 +35,12 @@ defmodule StreamCoreWeb.UserLoginLive do
         |> to_form()
 
       {:noreply, assign(socket, form: form)}
+    end
+  end
+
+  def handle_event("submit", params, socket) do
+    with {:ok, _params} <- Validator.cast(params, @form_params) do
+      {:noreply, socket}
     end
   end
 end
