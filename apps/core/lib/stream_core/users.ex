@@ -100,7 +100,7 @@ defmodule StreamCore.Users do
     |> Repo.insert()
   end
 
-  def delete_user_session_token(token) do
+  def delete_user_session_token(token \\ "") do
     token
     |> UserToken.query_by_token_and_context("session")
     |> Repo.delete_all()
