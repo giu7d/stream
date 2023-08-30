@@ -11,7 +11,6 @@ defmodule StreamCore.Helpers do
     json
     |> Jason.decode!()
     |> keys_to_atoms()
-    |> IO.inspect()
     |> Map.equal?(expected)
   end
 
