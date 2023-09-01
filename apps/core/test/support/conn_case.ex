@@ -14,6 +14,7 @@ defmodule StreamCoreWeb.ConnCase do
   by setting `use StreamCoreWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
+  alias StreamCoreWeb.Auth
 
   use ExUnit.CaseTemplate
 
@@ -35,5 +36,15 @@ defmodule StreamCoreWeb.ConnCase do
   setup tags do
     StreamCore.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
+  end
+
+  def with_test_session(conn) do
+    Phoenix.ConnTest.init_test_session(conn, %{})
+  end
+
+  def with_authenticated_session(conn, user) do
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Auth.grant_user_authentication(user)
   end
 end
