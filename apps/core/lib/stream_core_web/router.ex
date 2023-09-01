@@ -27,6 +27,7 @@ defmodule StreamCoreWeb.Router do
 
     get("/streams/:user_id/:filename", StreamController, :index)
     post("/users/login", UserSessionController, :create)
+    delete("/users/logout", UserSessionController, :delete)
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
