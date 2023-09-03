@@ -19,7 +19,7 @@ defmodule StreamCoreWeb.UserLoginLive do
       :ok,
       assign(
         socket,
-        page_title: "Welcome",
+        page_title: "Log In",
         form: form
       ),
       temporary_assigns: [form: form]
@@ -35,12 +35,6 @@ defmodule StreamCoreWeb.UserLoginLive do
         |> to_form()
 
       {:noreply, assign(socket, form: form)}
-    end
-  end
-
-  def handle_event("submit", params, socket) do
-    with {:ok, _params} <- Validator.cast(params, @form_params) do
-      {:noreply, socket}
     end
   end
 end

@@ -15,7 +15,7 @@ defmodule StreamCoreWeb.Auth do
       conn
       |> renew_session()
       |> put_session_token(session_token.token)
-      |> maybe_write_remember_me_cookie(session_token.token, params)
+      |> maybe_write_cookie(session_token.token, params)
     end
   end
 
@@ -35,19 +35,19 @@ defmodule StreamCoreWeb.Auth do
     end
   end
 
-  defp maybe_write_remember_me_cookie(conn, token, %{remember_me: true}) do
+  def maybe_write_cookie(conn, token, %{remember_me: true}) do
     put_resp_cookie(conn, @auth_cookie_name, token, @auth_cookie_options)
   end
 
-  defp maybe_write_remember_me_cookie(conn, _token, _params), do: conn
+  def maybe_write_cookie(conn, _token, _params), do: conn
 
-  defp renew_session(conn) do
+  def renew_session(conn) do
     conn
     |> configure_session(renew: true)
     |> clear_session()
   end
 
-  defp put_session_token(conn, token) do
+  def put_session_token(conn, token) do
     conn
     |> put_session(:user_token, token)
     |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token)}")

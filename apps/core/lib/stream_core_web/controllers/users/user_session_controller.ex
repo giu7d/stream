@@ -1,4 +1,5 @@
 defmodule StreamCoreWeb.UserSessionController do
+  alias StreamCore.Users.User
   alias StreamCore.Users
   alias StreamCoreWeb.Auth
   alias StreamCoreWeb.Validator
@@ -14,14 +15,32 @@ defmodule StreamCoreWeb.UserSessionController do
     }
   }
   def create(conn, params) do
+    handle_create(conn, params, :api)
+  end
+
+  def create_live(conn, params) do
+    handle_create(conn, params, :live_view)
+  end
+
+  def handle_create(conn, params, opts) do
     with {:ok, params} <- Validator.cast(params, @create_user_session_params),
-         user <- Users.find_user_with_password(params.user.username, params.user.password) do
+         %User{} = user <-
+           Users.find_user_with_password(params.user.username, params.user.password) do
       conn
       |> Auth.grant_user_authentication(user, %{remember_me: true})
-      |> put_status(:ok)
-      |> render("user_session_create.json", user: user)
+      |> handle_response_view(user, opts)
+    else
+      _ ->
+        conn
+        |> put_flash(:error, "Invalid email or password")
+        |> redirect(to: ~p"/login")
     end
   end
+
+  def handle_response_view(conn, _user, :live_view), do: redirect(conn, to: ~p"/")
+
+  def handle_response_view(conn, user, :api),
+    do: conn |> put_status(:ok) |> render("user_session_create.json", user: user)
 
   def delete(conn, _params) do
     conn
