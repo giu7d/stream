@@ -22,7 +22,7 @@ defmodule StreamCoreWeb.UserSessionController do
     handle_create(conn, params, :live_view)
   end
 
-  def handle_create(conn, params, opts) do
+  defp handle_create(conn, params, opts) do
     with {:ok, params} <- Validator.cast(params, @create_user_session_params),
          %User{} = user <-
            Users.find_user_with_password(params.user.username, params.user.password) do
@@ -37,9 +37,9 @@ defmodule StreamCoreWeb.UserSessionController do
     end
   end
 
-  def handle_response_view(conn, _user, :live_view), do: redirect(conn, to: ~p"/")
+  defp handle_response_view(conn, _user, :live_view), do: redirect(conn, to: ~p"/")
 
-  def handle_response_view(conn, user, :api),
+  defp handle_response_view(conn, user, :api),
     do: conn |> put_status(:ok) |> render("user_session_create.json", user: user)
 
   def delete(conn, _params) do

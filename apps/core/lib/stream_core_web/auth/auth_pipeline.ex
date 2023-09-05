@@ -1,6 +1,7 @@
 defmodule StreamCoreWeb.Auth.AuthPipeline do
   alias StreamCoreWeb.Auth
   alias StreamCore.Users
+  alias StreamCore.Users.User
 
   use StreamCoreWeb, :verified_routes
 
@@ -41,7 +42,8 @@ defmodule StreamCoreWeb.Auth.AuthPipeline do
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
-        Users.find_user_by_session_token(user_token)
+        {:ok, user} = Users.find_user_by_session_token(user_token)
+        user
       end
     end)
   end
@@ -57,9 +59,12 @@ defmodule StreamCoreWeb.Auth.AuthPipeline do
   end
 
   def fetch_current_user(conn, _opts) do
-    {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Users.find_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
+    with {user_token, conn} <- ensure_user_token(conn),
+         {:ok, %User{} = user} <- Users.find_user_by_session_token(user_token) do
+      assign(conn, :current_user, user)
+    else
+      _ -> assign(conn, :current_user, nil)
+    end
   end
 
   defp ensure_user_token(conn) do

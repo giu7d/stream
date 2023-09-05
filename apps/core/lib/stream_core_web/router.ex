@@ -32,9 +32,13 @@ defmodule StreamCoreWeb.Router do
   scope "/", StreamCoreWeb do
     pipe_through(:browser)
 
-    live("/", HomeLive, :new)
+    live_session :mount_current_user,
+      on_mount: [{AuthPipeline, :mount_current_user}] do
+      live("/", HomeLive, :new)
+      live("/:username", LiveStreamLive, :new)
+    end
+
     live("/register", UserLoginLive, :new)
-    live("/:username", LiveStreamLive, :new)
   end
 
   ## Authenticated Browser
