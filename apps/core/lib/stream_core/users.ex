@@ -51,6 +51,13 @@ defmodule StreamCore.Users do
     end
   end
 
+  def find_user_with_password(username, password)
+      when is_binary(username) and is_binary(password) do
+    user = Repo.get_by(User, username: username)
+
+    if User.valid_password?(user, password), do: user
+  end
+
   #
   # Followers
   #
@@ -93,7 +100,7 @@ defmodule StreamCore.Users do
     |> Repo.insert()
   end
 
-  def delete_user_session_token(token) do
+  def delete_user_session_token(token \\ "") do
     token
     |> UserToken.query_by_token_and_context("session")
     |> Repo.delete_all()

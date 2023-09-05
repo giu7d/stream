@@ -1,5 +1,9 @@
 defmodule StreamCoreWeb.Router do
+  alias StreamCoreWeb.Auth.AuthPipeline
+
   use StreamCoreWeb, :router
+
+  import StreamCoreWeb.Auth.AuthPipeline
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -15,15 +19,43 @@ defmodule StreamCoreWeb.Router do
   end
 
   scope "/", StreamCoreWeb do
+    pipe_through([:browser, :fetch_current_user, :redirect_if_user_is_authenticated])
+
+    live_session :redirect_if_user_is_authenticated,
+      on_mount: [{AuthPipeline, :redirect_if_user_is_authenticated}] do
+      live("/login", UserLoginLive, :new)
+    end
+
+    post("/login", UserSessionController, :create_live)
+  end
+
+  scope "/", StreamCoreWeb do
     pipe_through(:browser)
 
-    live("/:username", LiveStreamLive, :new)
+    live_session :mount_current_user,
+      on_mount: [{AuthPipeline, :mount_current_user}] do
+      live("/", HomeLive, :new)
+      live("/:username", LiveStreamLive, :new)
+    end
+
+    live("/register", UserLoginLive, :new)
+  end
+
+  ## Authenticated Browser
+  scope "/", StreamCoreWeb do
+    pipe_through(:browser)
   end
 
   scope "/api", StreamCoreWeb do
     pipe_through(:api)
 
-    get("/stream/:user_id/:filename", StreamController, :index)
+    get("/streams/:user_id/:filename", StreamController, :index)
+    post("/users/login", UserSessionController, :create)
+    delete("/users/logout", UserSessionController, :delete)
+  end
+
+  ## Authenticated API
+  scope "/api", StreamCoreWeb do
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
