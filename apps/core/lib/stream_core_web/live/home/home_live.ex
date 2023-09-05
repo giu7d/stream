@@ -2,8 +2,6 @@ defmodule StreamCoreWeb.HomeLive do
   use StreamCoreWeb, :live_view
 
   def mount(_params, _session, socket) do
-    IO.inspect(socket.assigns)
-
     {
       :ok,
       assign(
