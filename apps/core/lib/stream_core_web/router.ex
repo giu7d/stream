@@ -28,6 +28,7 @@ defmodule StreamCoreWeb.Router do
     end
 
     post("/login", UserSessionController, :create)
+    get("/logout", UserSessionController, :delete)
 
     live_session(
       :default,
