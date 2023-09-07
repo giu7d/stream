@@ -35,19 +35,23 @@ defmodule StreamCoreWeb.Auth do
     end
   end
 
-  def maybe_write_cookie(conn, token, %{remember_me: true}) do
+  def is_user_authenticated(conn) do
+    not is_nil(conn.assigns.current_user)
+  end
+
+  defp maybe_write_cookie(conn, token, %{remember_me: true}) do
     put_resp_cookie(conn, @auth_cookie_name, token, @auth_cookie_options)
   end
 
-  def maybe_write_cookie(conn, _token, _params), do: conn
+  defp maybe_write_cookie(conn, _token, _params), do: conn
 
-  def renew_session(conn) do
+  defp renew_session(conn) do
     conn
     |> configure_session(renew: true)
     |> clear_session()
   end
 
-  def put_session_token(conn, token) do
+  defp put_session_token(conn, token) do
     conn
     |> put_session(:user_token, token)
     |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token)}")
