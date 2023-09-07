@@ -128,6 +128,27 @@ defmodule StreamCore.UsersTest do
     end
   end
 
+  describe "find_user_with_password/2" do
+    test "finds user successfully" do
+      user = insert(:user)
+      assert {:ok, result} = Users.find_user_with_password(user.username, gen_password())
+      assert equals(user.id, result.id)
+    end
+
+    test "not find user if username incorrect" do
+      assert {:error, _} = Users.find_user_with_password("wrong_username", gen_password())
+    end
+
+    test "not find user if password incorrect" do
+      user = insert(:user)
+      assert {:error, _} = Users.find_user_with_password(user.username, "wrong_password")
+    end
+
+    test "returns error if no username or password informed" do
+      assert {:error, _} = Users.find_user_with_password(nil, nil)
+    end
+  end
+
   #
   # Followers
   #
@@ -257,9 +278,13 @@ defmodule StreamCore.UsersTest do
       assert {:ok, 1} = Users.delete_user_session_token(token.token)
     end
 
-    test "does not delete tokens if token does not exists" do
+    test "returns if token does not exists" do
       bad_token = gen_token()
-      assert {:error, :not_found} = Users.delete_user_session_token(bad_token)
+      assert {:ok, 0} = Users.delete_user_session_token(bad_token)
+    end
+
+    test "returns error if token is nil" do
+      assert {:error, _} = Users.delete_user_session_token(nil)
     end
   end
 
@@ -272,6 +297,10 @@ defmodule StreamCore.UsersTest do
     test "does not find user from expired session token" do
       token = insert(:user_token, %{inserted_at: ~N[2000-01-01 01:00:00.000000]})
       assert {:error, :not_found} = Users.find_user_by_session_token(token.token)
+    end
+
+    test "returns error if no token is provided" do
+      assert {:error, _} = Users.find_user_by_session_token(nil)
     end
   end
 end

@@ -3,9 +3,9 @@ defmodule StreamCoreWeb.UserController do
 
   @create_user_session_params %{
     user: %{
-      email: [type: :string],
-      username: [type: :string],
-      password: [type: :string]
+      email: [type: :string, required: true],
+      username: [type: :string, required: true],
+      password: [type: :string, required: true]
     }
   }
   def create(conn, _params) do

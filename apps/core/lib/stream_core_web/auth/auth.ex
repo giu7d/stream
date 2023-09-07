@@ -12,10 +12,11 @@ defmodule StreamCoreWeb.Auth do
 
   def grant_user_authentication(conn, user, params \\ %{}) do
     with {:ok, %UserToken{} = session_token} <- Users.create_user_session_token(user) do
-      conn
-      |> renew_session()
-      |> put_session_token(session_token.token)
-      |> maybe_write_cookie(session_token.token, params)
+      {:ok,
+       conn
+       |> renew_session()
+       |> put_session_token(session_token.token)
+       |> maybe_write_cookie(session_token.token, params)}
     end
   end
 
@@ -29,9 +30,10 @@ defmodule StreamCoreWeb.Auth do
         StreamCoreWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
       end
 
-      conn
-      |> renew_session()
-      |> delete_resp_cookie(@auth_cookie_name)
+      {:ok,
+       conn
+       |> renew_session()
+       |> delete_resp_cookie(@auth_cookie_name)}
     end
   end
 

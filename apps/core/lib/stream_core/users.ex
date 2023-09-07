@@ -55,8 +55,14 @@ defmodule StreamCore.Users do
       when is_binary(username) and is_binary(password) do
     user = Repo.get_by(User, username: username)
 
-    if User.valid_password?(user, password), do: user
+    if User.valid_password?(user, password) do
+      {:ok, user}
+    else
+      {:error, :unauthorized}
+    end
   end
+
+  def find_user_with_password(_, _), do: {:error, :not_found}
 
   #
   # Followers
@@ -100,17 +106,18 @@ defmodule StreamCore.Users do
     |> Repo.insert()
   end
 
-  def delete_user_session_token(token \\ "") do
-    token
-    |> UserToken.query_by_token_and_context("session")
-    |> Repo.delete_all()
-    |> case do
-      {0, _} -> {:error, :not_found}
-      {count, _} -> {:ok, count}
-    end
+  def delete_user_session_token(token) when is_binary(token) do
+    {count, _} =
+      token
+      |> UserToken.query_by_token_and_context("session")
+      |> Repo.delete_all()
+
+    {:ok, count}
   end
 
-  def find_user_by_session_token(token, preloads \\ []) do
+  def delete_user_session_token(_), do: {:error, :bad_request}
+
+  def find_user_by_session_token(token, preloads \\ []) when is_binary(token) do
     token
     |> UserToken.query_by_verified_session_token()
     |> Repo.one()
@@ -121,4 +128,6 @@ defmodule StreamCore.Users do
       _ -> {:error, :unexpected}
     end
   end
+
+  def find_user_by_session_token(_, _), do: {:error, :bad_request}
 end

@@ -36,6 +36,57 @@ defmodule StreamCoreWeb.UserSessionControllerTest do
                stream_key: nil
              })
     end
+
+    test "deny user access if wrong username", %{conn: conn} do
+      conn =
+        conn
+        |> with_test_session()
+        |> post(~p"/api/users/login", %{
+          user: %{
+            username: "wrong_username",
+            password: gen_password()
+          }
+        })
+
+      assert equals(conn.status, 401)
+
+      refute get_session(conn, :user_token)
+    end
+
+    test "deny user access if wrong password", %{conn: conn} do
+      user = insert(:user)
+
+      conn =
+        conn
+        |> with_test_session()
+        |> post(~p"/api/users/login", %{
+          user: %{
+            username: user.username,
+            password: "wrong_password"
+          }
+        })
+
+      assert equals(conn.status, 401)
+
+      refute get_session(conn, :user_token)
+    end
+
+    test "deny user access if wrong request format", %{conn: conn} do
+      user = insert(:user)
+
+      conn =
+        conn
+        |> with_test_session()
+        |> post(~p"/api/users/login", %{
+          user: %{
+            username: user.username
+          }
+        })
+
+      assert equals(conn.status, 400)
+
+      refute get_session(conn, :user_token)
+    end
   end
 
   describe "DELETE /api/users/logout" do
@@ -55,6 +106,17 @@ defmodule StreamCoreWeb.UserSessionControllerTest do
       refute get_session(conn, :user_token)
 
       assert equals(conn.status, 200)
+    end
+
+    test "can not revoke user if no authenticated session", %{conn: conn} do
+      conn =
+        conn
+        |> with_test_session()
+        |> delete(~p"/api/users/logout")
+
+      refute get_session(conn, :user_token)
+
+      assert equals(conn.status, 400)
     end
   end
 end

@@ -7,8 +7,8 @@ defmodule StreamCoreWeb.StreamController do
   @stream_live_dir Application.compile_env(:stream_core, :stream_live_dir, "live")
 
   @index_stream_params %{
-    filename: [type: :string],
-    user_id: [type: :string]
+    filename: [type: :string, required: true],
+    user_id: [type: :string, required: true]
   }
 
   def index(conn, params) do

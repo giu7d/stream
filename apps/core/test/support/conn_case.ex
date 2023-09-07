@@ -43,8 +43,11 @@ defmodule StreamCoreWeb.ConnCase do
   end
 
   def with_authenticated_session(conn, user) do
+    {:ok, conn} =
+      conn
+      |> Phoenix.ConnTest.init_test_session(%{})
+      |> Auth.grant_user_authentication(user)
+
     conn
-    |> Phoenix.ConnTest.init_test_session(%{})
-    |> Auth.grant_user_authentication(user)
   end
 end
