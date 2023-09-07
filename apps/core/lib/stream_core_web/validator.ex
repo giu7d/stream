@@ -4,4 +4,8 @@ defmodule StreamCoreWeb.Validator do
       {:ok, Tarams.clean_nil(params)}
     end
   end
+
+  def is_api_scope?(%Plug.Conn{request_path: request_path}) do
+    String.contains?(request_path, "/api")
+  end
 end
