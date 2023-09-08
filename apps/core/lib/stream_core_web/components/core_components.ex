@@ -740,9 +740,10 @@ defmodule StreamCoreWeb.CoreComponents do
     <section class="flex justify-center items-center h-screen w-screen">
       <div
         class={[
-          " flex flex-col h-screen w-screen overflow-hidden ",
-          " md:bg-gradient-to-br md:from-neutral-700 md:to-neutral-900 md:absolute md:w-5/6 md:h-auto md:rounded-3xl ",
-          " lg:flex-row lg:items-center max-w-4xl ",
+          " flex flex-col h-screen w-screen max-w-4xl overflow-hidden ",
+          " bg-gradient-to-br from-neutral-700 to-neutral-900 ",
+          " md:absolute md:h-fit md:w-5/6 md:rounded-3xl ",
+          " lg:flex-row lg:h-2/3",
           @class
         ]}
       >

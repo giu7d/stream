@@ -2,14 +2,15 @@
     <div
       class={[
         " flex bg-transparent overflow-hidden fixed z-1 h-screen w-screen ",
-        " md:items-center md:justify-center md:relative md:h-32 md:w-full md:flex-grow ",
-        " lg:h-full "
+        " md:items-center md:justify-center md:relative md:h-64 md:w-full ",
+        " lg:h-full"
       ]}
     >
-      <img class="relative object-cover w-4/6 blur-md opacity-50" src={~p"/images/stream-bg.png"} />
-      <div class="absolute flex justify-center items-center w-full h-1/3 md:h-full">
+      <img class="relative object-cover w-full blur-md opacity-50" src={~p"/images/stream-bg.jpg"} />
+      <div class="absolute flex flex-col justify-center items-center w-full h-1/3 md:h-full">
+        <img class="w-1/2 md:w-1/3 lg:w-1/2" src={~p"/images/stream-logo.png"} />
         <h1 class="hidden">Stream</h1>
-        <img class="w-1/2 md:w-1/5 lg:w-1/2" src={~p"/images/stream-logo.png"} />
+        <p class="text-white font-semibold opacity-75">Stream app using elixir</p>
       </div>
     </div>
 
@@ -17,7 +18,7 @@
       class={[
         " flex absolute top-1/3 h-full w-full justify-center z-10 ",
         " bg-gradient-to-br from-neutral-700 to-neutral-900 shadow-xl shadow-black ",
-        " md:relative md:top-auto "
+        " md:relative md:top-auto"
       ]}
     >
       <.form
@@ -28,7 +29,7 @@
         phx-change="validate"
       >
         <div class="flex flex-col items-center gap-2 mb-6">
-          <h2 class="text-white text-4xl font-semibold">Welcome back!</h2>
+          <h2 class="text-white text-3xl font-semibold">Welcome back!</h2>
           <p class="text-white opacity-75 text-md font-normal">Please enter your details</p>
         </div>
         <div class="flex flex-col w-full gap-4">

@@ -34,9 +34,11 @@ defmodule StreamCoreWeb.Auth.AuthLiveSession do
 
   defp mount_current_user(socket, session) do
     assign_new(socket, :current_user, fn ->
-      if user_token = session["user_token"] do
-        {:ok, user} = Users.find_user_by_session_token(user_token)
+      with user_token <- session["user_token"],
+           {:ok, user} <- Users.find_user_by_session_token(user_token) do
         user
+      else
+        _ -> nil
       end
     end)
   end
