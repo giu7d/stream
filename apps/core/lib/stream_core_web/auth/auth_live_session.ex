@@ -6,8 +6,6 @@ defmodule StreamCoreWeb.Auth.AuthLiveSession do
 
   import Phoenix.Component
 
-  @auth_cookie_name "_stream_core_auth"
-
   def on_mount(:mount_current_user, _params, session, socket) do
     {:cont, mount_current_user(socket, session)}
   end
