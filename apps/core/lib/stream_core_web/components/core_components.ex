@@ -742,7 +742,7 @@ defmodule StreamCoreWeb.CoreComponents do
         " flex flex-col h-screen w-screen max-w-4xl overflow-hidden ",
         " bg-gradient-to-br from-neutral-700 to-neutral-900 ",
         " md:absolute md:h-fit md:w-5/6 md:rounded-3xl ",
-        " lg:flex-row lg:h-2/3 ",
+        " lg:flex-row lg:min-h-2/3 ",
         @class
       ]}>
         <%= render_slot(@inner_block) %>
