@@ -116,8 +116,10 @@ defmodule StreamCore.LiveStream do
     Agent.update(
       StreamCore.SocketAgent,
       fn sockets ->
-        # %{user: user} = Map.get(sockets, state.socket)
-        # Vods.create_vod(%{user: user})
+        %{user: user} = Map.get(sockets, state.socket)
+
+        StreamCore.FileStorage.remove_output_folder(user, state)
+
         Map.delete(sockets, state.socket)
       end
     )
@@ -125,6 +127,7 @@ defmodule StreamCore.LiveStream do
     {[], state}
   end
 
+  @spec list_live_streams :: any
   def list_live_streams() do
     Agent.get(
       StreamCore.SocketAgent,

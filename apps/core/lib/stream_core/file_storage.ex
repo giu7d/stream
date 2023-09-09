@@ -10,6 +10,7 @@ defmodule StreamCore.FileStorage do
           socket: port()
         }
 
+  @stream_output_dir Application.compile_env(:stream_core, :stream_output_dir, "output")
   @stream_output_file Application.compile_env(:stream_core, :stream_output_file, "index.m3u8")
   @stream_live_file Application.compile_env(:stream_core, :stream_live_file, "live.m3u8")
   @stream_live_dir Application.compile_env(:stream_core, :stream_live_dir, "live")
@@ -67,10 +68,16 @@ defmodule StreamCore.FileStorage do
     {File.rm(build_output_folder(state, name)), state}
   end
 
-  defp build_output_folder(state, name) do
-    # %LiveStream{user: user} =
-    #   LiveStream.update_live_stream(state.socket, fn _ -> %{is_live?: true} end)
+  def remove_output_folder(user, state) do
+    status =
+      [@stream_output_dir, Integer.to_string(user.id)]
+      |> Path.join()
+      |> File.rm_rf()
 
+    {status, state}
+  end
+
+  defp build_output_folder(state, name) do
     %LiveStream.Stream{user: user} =
       LiveStream.update_live_stream(state.socket, fn _ -> %{is_live?: true} end)
 
