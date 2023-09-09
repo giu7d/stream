@@ -127,7 +127,6 @@ defmodule StreamCore.LiveStream do
     {[], state}
   end
 
-  @spec list_live_streams :: any
   def list_live_streams() do
     Agent.get(
       StreamCore.SocketAgent,

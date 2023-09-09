@@ -36,9 +36,7 @@ defmodule StreamCore.Users do
 
   def list_users(), do: {:ok, Repo.all(User)}
 
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
-  end
+  def delete_user(%User{} = user), do: Repo.delete(user)
 
   def find_user(search_params, preloads \\ []) do
     search_params
@@ -55,10 +53,11 @@ defmodule StreamCore.Users do
       when is_binary(username) and is_binary(password) do
     user = Repo.get_by(User, username: username)
 
-    if User.valid_password?(user, password) do
-      {:ok, user}
-    else
-      {:error, :unauthorized}
+    user
+    |> User.valid_password?(password)
+    |> case do
+      true -> {:ok, user}
+      _ -> {:error, :unauthorized}
     end
   end
 
@@ -117,7 +116,9 @@ defmodule StreamCore.Users do
 
   def delete_user_session_token(_), do: {:error, :bad_request}
 
-  def find_user_by_session_token(token, preloads \\ []) when is_binary(token) do
+  def find_user_by_session_token(token), do: find_user_by_session_token(token, [])
+
+  def find_user_by_session_token(token, preloads) when is_binary(token) do
     token
     |> UserToken.query_by_verified_session_token()
     |> Repo.one()
