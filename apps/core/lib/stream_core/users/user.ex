@@ -1,4 +1,5 @@
 defmodule StreamCore.Users.User do
+  alias StreamCore.Users.Follower
   alias StreamCore.Repo
   alias StreamCore.Users.User
 
@@ -13,6 +14,16 @@ defmodule StreamCore.Users.User do
     field(:password, :string, virtual: true, redact: true)
     field(:hashed_password, :string, redact: true)
     field(:stream_key, :binary)
+
+    many_to_many(:followers, User,
+      join_through: Follower,
+      join_keys: [streamer_id: :id, follower_id: :id]
+    )
+
+    many_to_many(:following, User,
+      join_through: Follower,
+      join_keys: [follower_id: :id, streamer_id: :id]
+    )
 
     timestamps()
   end
