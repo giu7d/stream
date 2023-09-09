@@ -1,4 +1,3 @@
-<!--SideBar-->
 <nav
   class={[
     " fixed flex flex-col h-screen w-[300px] px-6 py-12 justify-between ",
@@ -11,59 +10,88 @@
       <h1 class="hidden">Stream</h1>
       <img class="h-8 w-fit" src={~p"/images/stream-logo-dark.svg"} alt="stream logo" />
     </div>
-    <section class="flex flex-col gap-6">
-      <h3 class="text-white text-opacity-25 text-md font-semibold">Followed channels</h3>
-      <div class="flex flex-col gap-4">
-        <.link class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity">
-          <div class="flex flex-row gap-2 items-center">
-            <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
-            <span class="line-clamp-1">stream name</span>
+    <%= if @current_user do%>
+      <section class="flex flex-col gap-6">
+        <h3 class="text-white text-opacity-25 text-md font-semibold">Followed channels</h3>
+        <div class="flex flex-col gap-4">
+
+        <%= if length(@current_user.following) > 0 do%>
+          <%= for following <- @current_user.following do %>
+            <.link
+              class={[
+                "flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity",
+                is_nil(Enum.find(@live_streams, fn s -> s.user.id == following.id end)) && "opacity-50"
+              ]}
+            >
+              <div class="flex flex-row gap-2 items-center">
+                <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
+                <span class="line-clamp-1">
+                  <%= following.username %>
+                </span>
+              </div>
+              <%= if Enum.find(@live_streams, fn s -> s.user.id == following.id end) do%>
+                <div  class="flex flex-row gap-2 items-center">
+                  <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
+                  <span>200</span>
+                </div>
+              <% end %>
+            </.link>
+          <% end %>
+        <% else %>
+          <div class="flex flex-col flex-grow h-[400px] justify-center items-center text-white text-opacity-50">
+            <.icon name="hero-eye-slash-solid" class="h-4 w-4" />
+            <span>You do not follow no one yet!</span>
           </div>
-          <div  class="flex flex-row gap-2 items-center">
-            <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
-            <span>200</span>
-          </div>
-        </.link>
-        <.link class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity">
-          <div class="flex flex-row gap-2 items-center">
-            <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
-            <span class="line-clamp-1">stream name 2 with a long name to clip string</span>
-          </div>
-          <div  class="flex flex-row gap-2 items-center">
-            <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
-            <span>200</span>
-          </div>
-        </.link>
-      </div>
-    </section>
+        <% end %>
+        </div>
+      </section>
+    <% end %>
   </div>
 
-  <div class="flex flex-col gap-6">
-    <h3 class="text-white text-opacity-25 text-md font-semibold">My account</h3>
-    <div class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75">
-      <div class="flex flex-row gap-2 items-center">
-        <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
-        <span class="line-clamp-1">stream name</span>
+  <%= if @current_user do%>
+    <div class="flex flex-col gap-6">
+      <h3 class="text-white text-opacity-25 text-md font-semibold">My account</h3>
+      <div class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75">
+        <div class="flex flex-row gap-2 items-center">
+          <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
+          <span class="line-clamp-1">
+            <%= @current_user.username %>
+          </span>
+        </div>
+        <.link navigate={~p"/logout"} data-tooltip-target="tooltip-logout" class="hover:opacity-75 transition-opacity">
+          <.icon name="hero-power-solid" class="h-4 w-4 text-red-500" />
+        </.link>
+        <div id="tooltip-logout" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-neutral-900 rounded-lg shadow-sm opacity-0 tooltip">
+          Log out
+          <div class="tooltip-arrow" data-popper-arrow></div>
+        </div>
       </div>
-      <.link data-tooltip-target="tooltip-default" class="hover:opacity-75 transition-opacity">
-        <.icon name="hero-power-solid" class="h-4 w-4 text-red-500" />
-      </.link>
-      <div id="tooltip-default" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-neutral-900 rounded-lg shadow-sm opacity-0 tooltip">
-        Log out
-        <div class="tooltip-arrow" data-popper-arrow></div>
-      </div>
+      <section class="flex flex-col gap-5">
+        <.link class="flex flex-row gap-2 items-center font-semibold text-sm text-white text-opacity-50 hover:opacity-75 transition-opacity">
+          <.icon name="hero-cog-8-tooth-solid" class="h-4 w-4" />
+          <span>Settings</span>
+        </.link>
+        <.link class="flex flex-row gap-2 items-center font-semibold text-sm text-white text-opacity-50 hover:opacity-75 transition-opacity">
+          <.icon name="hero-key-solid" class="h-4 w-4" />
+          <span>Stream keys</span>
+        </.link>
+      </section>
     </div>
-    <section class="flex flex-col gap-5">
-      <.link class="flex flex-row gap-2 items-center font-semibold text-sm text-white text-opacity-50 hover:opacity-75 transition-opacity">
-        <.icon name="hero-cog-8-tooth-solid" class="h-4 w-4" />
-        <span>Settings</span>
-      </.link>
-      <.link class="flex flex-row gap-2 items-center font-semibold text-sm text-white text-opacity-50 hover:opacity-75 transition-opacity">
-        <.icon name="hero-key-solid" class="h-4 w-4" />
-        <span>Stream keys</span>
-      </.link>
-    </section>
-  </div>
+  <%else %>
+    <div class="flex flex-col gap-6">
+      <h3 class="text-white text-opacity-25 text-md font-semibold">Welcome</h3>
+      <section class="flex flex-col gap-5">
+        <.link navigate={~p"/login"} class="flex flex-row gap-2 items-center font-semibold text-sm text-blue-400 hover:opacity-75 transition-opacity">
+          <.icon name="hero-arrow-left-on-rectangle" class="h-4 w-4" />
+          <span>Log In</span>
+        </.link>
+        <.link navigate={~p"/register"} class="flex flex-row gap-2 items-center font-semibold text-sm text-white text-opacity-50 hover:opacity-75 transition-opacity">
+          <.icon name="hero-user-plus" class="h-4 w-4" />
+          <span>Register account</span>
+        </.link>
+      </section>
+    </div>
+  <% end %>
 </nav>
 
 <main class="flex flex-row min-h-screen w-full">
@@ -73,71 +101,33 @@
     <section class="flex flex-col gap-6">
       <h3 class="text-white text-opacity-25 text-md font-semibold">Who is online?</h3>
       <div class="flex flex-row flex-wrap flex-grow gap-6">
-        <div class="flex flex-col w-[250px] h-[200px] p-4 bg-neutral-900 rounded-lg">
-          <div class="flex flex-col flex-grow justify-center items-center text-white text-opacity-50">
-            <.icon name="hero-eye-solid" class="h-4 w-4" />
+        <%= if length(@live_streams) > 0 do%>
+          <%= for live_stream <- @live_streams do %>
+            <div class="flex flex-col w-[250px] h-[200px] p-4 bg-neutral-900 rounded-lg">
+              <div class="flex flex-col flex-grow justify-center items-center text-white text-opacity-50">
+                <.icon name="hero-eye-slash-solid" class="h-4 w-4" />
+                <span>No stream preview</span>
+              </div>
+              <.link navigate={"/#{live_stream.user.username}"} class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity">
+                <div class="flex flex-row gap-2 items-center">
+                  <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
+                  <span class="line-clamp-1"><%= live_stream.user.username %></span>
+                </div>
+                <div  class="flex flex-row gap-2 items-center">
+                  <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
+                  <span>200</span>
+                </div>
+              </.link>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="flex flex-col flex-grow h-[400px] justify-center items-center text-white text-opacity-50">
+            <.icon name="hero-eye-slash-solid" class="h-4 w-4" />
             <span>No stream preview</span>
           </div>
-          <.link class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity">
-            <div class="flex flex-row gap-2 items-center">
-              <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
-              <span class="line-clamp-1">stream name 2 with a long name</span>
-            </div>
-            <div  class="flex flex-row gap-2 items-center">
-              <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
-              <span>200</span>
-            </div>
-          </.link>
-        </div>
+        <% end %>
+
       </div>
     </section>
   </div>
 </main>
-
-<!--
-<div class="flex flex-col w-screen h-screen text-white">
-  <div class="flex w-screen h-fit px-6 py-4 items-center justify-between">
-    <div>
-      <img class="h-12" src={~p"/images/stream-logo-dark.png"} />
-      <h1 class="hidden">Stream</h1>
-    </div>
-
-    <%= if is_nil(@current_user) do%>
-        <.primary_button_link
-          class="w-fit px-4 rounded-lg"
-          navigate={~p"/login"}
-        >
-          Log In
-        </.primary_button_link>
-    <%else %>
-      <div class="flex flex-row">
-        <span class="mx-2 text-md font-semibold">
-          <%= @current_user.username %>
-        </span>
-        <.text_link
-          class="w-fit px-4 rounded-lg"
-          navigate={~p"/logout"}
-        >
-          log out
-        </.text_link>
-      </div>
-    <% end %>
-  </div>
-
-  <div class="flex flex-col flex-grow w-screen items-center justify-center">
-    <%= if length(@live_streams) > 0 do%>
-      <%= for live_stream <- @live_streams do %>
-        <.link href={"/live/#{live_stream.user.username}"}>
-          <div class="flex flex-col items-center justify-center w-40 h-32 border border-neutral-950 rounded-xl shadow-md shadow-neutral-900 bg-gradient-to-br from-neutral-950 to-black">
-            <p class="capitalize">
-              <%= live_stream.user.username %>
-            </p>
-          </div>
-        </.link>
-      <% end %>
-    <% else %>
-      <p>No live streams available</p>
-    <% end %>
-  </div>
-</div>
--->
