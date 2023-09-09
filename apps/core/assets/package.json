@@ -1,0 +1,15 @@
+{
+  "name": "stream-core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "js/app.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "flowbite": "^1.8.1",
+    "topbar": "^2.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.3"
+  }
+}
