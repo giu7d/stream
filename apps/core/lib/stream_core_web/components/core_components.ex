@@ -687,9 +687,9 @@ defmodule StreamCoreWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "flex bg-white hover:opacity-75 transition-opacity rounded-full h-10 w-full justify-center items-center text-neutral-950 font-semibold",
-        "phx-submit-loading:opacity-50",
-        "disabled:opacity-50",
+        " flex bg-white hover:opacity-75 transition-opacity rounded-full h-10 w-full justify-center items-center text-neutral-950 font-semibold ",
+        " phx-submit-loading:opacity-50 ",
+        " disabled:opacity-50 ",
         @class
       ]}
       {@rest}
@@ -715,8 +715,8 @@ defmodule StreamCoreWeb.CoreComponents do
     <.link
       navigate={@navigate}
       class={[
-        "text-white text-opacity-100 font-bold underline cursor-pointer transition-opacity",
-        "hover:opacity-75",
+        " text-white text-opacity-100 font-bold underline cursor-pointer transition-opacity ",
+        " hover:opacity-75 ",
         @class
       ]}
     >
@@ -738,15 +738,13 @@ defmodule StreamCoreWeb.CoreComponents do
   def container(assigns) do
     ~H"""
     <section class="flex justify-center items-center h-screen w-screen">
-      <div
-        class={[
-          " flex flex-col h-screen w-screen max-w-4xl overflow-hidden ",
-          " bg-gradient-to-br from-neutral-700 to-neutral-900 ",
-          " md:absolute md:h-fit md:w-5/6 md:rounded-3xl ",
-          " lg:flex-row lg:h-2/3",
-          @class
-        ]}
-      >
+      <div class={[
+        " flex flex-col h-screen w-screen max-w-4xl overflow-hidden ",
+        " bg-gradient-to-br from-neutral-700 to-neutral-900 ",
+        " md:absolute md:h-fit md:w-5/6 md:rounded-3xl ",
+        " lg:flex-row lg:h-2/3 ",
+        @class
+      ]}>
         <%= render_slot(@inner_block) %>
       </div>
     </section>

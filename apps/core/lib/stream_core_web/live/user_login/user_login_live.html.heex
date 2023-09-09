@@ -3,10 +3,10 @@
       class={[
         " flex bg-transparent overflow-hidden fixed z-1 h-screen w-screen ",
         " md:items-center md:justify-center md:relative md:h-64 md:w-full ",
-        " lg:h-full"
+        " lg:h-full "
       ]}
     >
-      <img class="relative object-cover w-full blur-md opacity-50" src={~p"/images/stream-bg.jpg"} />
+      <img class="relative object-cover h-full w-full blur-md opacity-50" src={~p"/images/stream-bg.jpg"} />
       <div class="absolute flex flex-col justify-center items-center w-full h-1/3 md:h-full">
         <img class="w-1/2 md:w-1/3 lg:w-1/2" src={~p"/images/stream-logo.png"} />
         <h1 class="hidden">Stream</h1>
@@ -18,7 +18,7 @@
       class={[
         " flex absolute top-1/3 h-full w-full justify-center z-10 ",
         " bg-gradient-to-br from-neutral-700 to-neutral-900 shadow-xl shadow-black ",
-        " md:relative md:top-auto"
+        " md:relative md:top-auto "
       ]}
     >
       <.form
@@ -47,8 +47,8 @@
             type="password"
             placeholder="Your password"
           />
+          <.primary_button phx-disable-with="Logging in..." class="mt-6">Log In</.primary_button>
         </div>
-        <.primary_button phx-disable-with="Logging in...">Log In</.primary_button>
         <p class="text-white text-opacity-75 text-sm font-normal my-6">
           Don't have a account?
           <.text_link navigate="/register">Sign up</.text_link>
