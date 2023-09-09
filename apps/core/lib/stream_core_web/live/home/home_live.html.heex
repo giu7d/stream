@@ -1,7 +1,7 @@
 <!--SideBar-->
-<div
+<nav
   class={[
-    " absolute h-screen w-80 flex flex-col px-6 py-12 justify-between",
+    " fixed flex flex-col h-screen w-[300px] px-6 py-12 justify-between ",
     " bg-gradient-to-br from-neutral-900 to-neutral-950 shadow-xl shadow-black ",
   ]}
 >
@@ -11,13 +11,23 @@
       <h1 class="hidden">Stream</h1>
       <img class="h-8 w-fit" src={~p"/images/stream-logo-dark.svg"} alt="stream logo" />
     </div>
-    <div class="flex flex-col gap-6">
+    <section class="flex flex-col gap-6">
       <h3 class="text-white text-opacity-25 text-md font-semibold">Followed channels</h3>
       <div class="flex flex-col gap-4">
         <.link class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity">
           <div class="flex flex-row gap-2 items-center">
             <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
-            <span>stream name</span>
+            <span class="line-clamp-1">stream name</span>
+          </div>
+          <div  class="flex flex-row gap-2 items-center">
+            <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
+            <span>200</span>
+          </div>
+        </.link>
+        <.link class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity">
+          <div class="flex flex-row gap-2 items-center">
+            <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
+            <span class="line-clamp-1">stream name 2 with a long name to clip string</span>
           </div>
           <div  class="flex flex-row gap-2 items-center">
             <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
@@ -25,7 +35,7 @@
           </div>
         </.link>
       </div>
-    </div>
+    </section>
   </div>
 
   <div class="flex flex-col gap-6">
@@ -33,7 +43,7 @@
     <div class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75">
       <div class="flex flex-row gap-2 items-center">
         <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
-        <span>stream name</span>
+        <span class="line-clamp-1">stream name</span>
       </div>
       <.link data-tooltip-target="tooltip-default" class="hover:opacity-75 transition-opacity">
         <.icon name="hero-power-solid" class="h-4 w-4 text-red-500" />
@@ -43,7 +53,7 @@
         <div class="tooltip-arrow" data-popper-arrow></div>
       </div>
     </div>
-    <div class="flex flex-col gap-5">
+    <section class="flex flex-col gap-5">
       <.link class="flex flex-row gap-2 items-center font-semibold text-sm text-white text-opacity-50 hover:opacity-75 transition-opacity">
         <.icon name="hero-cog-8-tooth-solid" class="h-4 w-4" />
         <span>Settings</span>
@@ -52,10 +62,37 @@
         <.icon name="hero-key-solid" class="h-4 w-4" />
         <span>Stream keys</span>
       </.link>
-    </div>
+    </section>
   </div>
-</div>
+</nav>
 
+<main class="flex flex-row min-h-screen w-full">
+  <div class="min-w-[300px]"></div> <!--SideBar Spacing-->
+  <div class="flex flex-col gap-12 w-full p-12">
+    <div class="h-8"></div> <!--Search Bar-->
+    <section class="flex flex-col gap-6">
+      <h3 class="text-white text-opacity-25 text-md font-semibold">Who is online?</h3>
+      <div class="flex flex-row flex-wrap flex-grow gap-6">
+        <div class="flex flex-col w-[250px] h-[200px] p-4 bg-neutral-900 rounded-lg">
+          <div class="flex flex-col flex-grow justify-center items-center text-white text-opacity-50">
+            <.icon name="hero-eye-solid" class="h-4 w-4" />
+            <span>No stream preview</span>
+          </div>
+          <.link class="flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity">
+            <div class="flex flex-row gap-2 items-center">
+              <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
+              <span class="line-clamp-1">stream name 2 with a long name</span>
+            </div>
+            <div  class="flex flex-row gap-2 items-center">
+              <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
+              <span>200</span>
+            </div>
+          </.link>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
 
 <!--
 <div class="flex flex-col w-screen h-screen text-white">
