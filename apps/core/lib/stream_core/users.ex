@@ -93,6 +93,28 @@ defmodule StreamCore.Users do
     end
   end
 
+  def is_user_following?(%{follower_id: _, streamer_id: _} = params) do
+    Follower
+    |> Repo.get_by(params)
+    |> case do
+      %Follower{} -> true
+      _ -> false
+    end
+  end
+
+  def is_user_following?(_), do: false
+
+  def find_user_followings(user_id, preloads \\ []) do
+    %{follower_id: user_id}
+    |> Follower.query_by_params(preloads)
+    |> Repo.all()
+    |> case do
+      [%Follower{}] = followings -> {:ok, followings}
+      nil -> {:error, :not_found}
+      _ -> {:error, :unexpected}
+    end
+  end
+
   #
   # User Session Tokens
   #
