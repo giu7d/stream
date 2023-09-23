@@ -6,14 +6,14 @@ defmodule StreamCore.Application do
   use Application
 
   alias StreamCore.LiveStream
-  alias Membrane.RTMP.Source.TcpServer
+  alias Membrane.RTMP.Source.TcpServer, as: LiveStreamRTMPServer
 
   @port Application.compile_env(:stream_core, :stream_port, 9006)
   @host Application.compile_env(:stream_core, :stream_host, {127, 0, 0, 1})
 
   @impl true
   def start(_type, _args) do
-    tcp_server_options = %TcpServer{
+    tcp_server_options = %LiveStreamRTMPServer{
       port: @port,
       listen_options: [
         :binary,
@@ -27,14 +27,16 @@ defmodule StreamCore.Application do
     children = [
       # Start the Membrane TCP Server
       %{
-        id: TcpServer,
-        start: {TcpServer, :start_link, [tcp_server_options]}
+        id: LiveStreamRTMPServer,
+        start: {LiveStreamRTMPServer, :start_link, [tcp_server_options]}
       },
-      # Start Socket Agent
+      # Start the Socket Agent
       %{
         id: StreamCore.SocketAgent,
         start: {Agent, :start_link, [fn -> %{} end, [name: StreamCore.SocketAgent]]}
       },
+      # Start the Live Stream Monitor
+      StreamCore.LiveStreamMonitor,
       # Start the Telemetry supervisor
       StreamCoreWeb.Telemetry,
       # Start the Ecto repository
