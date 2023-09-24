@@ -1,7 +1,8 @@
 defimpl Membrane.RTMP.MessageValidator, for: StreamCore.LiveStream.StreamValidator do
   alias StreamCore.LiveStream
-  alias StreamCore.Users.User
+  alias StreamCore.LiveStreamStatus
   alias StreamCore.Users
+  alias StreamCore.Users.User
 
   @impl true
   def validate_release_stream(_impl, _message) do
@@ -23,16 +24,13 @@ defimpl Membrane.RTMP.MessageValidator, for: StreamCore.LiveStream.StreamValidat
   end
 
   defp start_stream({:ok, %User{} = user}, impl) do
-    LiveStream.update_live_stream(
-      impl.socket,
-      fn _ -> %{is_live?: true, user: user} end
-    )
+    stream =
+      LiveStream.update_live_stream(
+        impl.socket,
+        fn _ -> %{is_live?: true, user: user} end
+      )
 
-    Phoenix.PubSub.broadcast(
-      StreamCore.PubSub,
-      "streamer_live",
-      {:streamer_went_live, user}
-    )
+    LiveStreamStatus.broadcast_universal_stream_online(stream)
 
     {:ok, :stream_started}
   end
