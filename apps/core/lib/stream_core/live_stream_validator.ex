@@ -1,7 +1,8 @@
 defimpl Membrane.RTMP.MessageValidator, for: StreamCore.LiveStream.StreamValidator do
   alias StreamCore.LiveStream
-  alias StreamCore.Users.User
+  alias StreamCore.LiveStreamStatus
   alias StreamCore.Users
+  alias StreamCore.Users.User
 
   @impl true
   def validate_release_stream(_impl, _message) do
@@ -10,7 +11,11 @@ defimpl Membrane.RTMP.MessageValidator, for: StreamCore.LiveStream.StreamValidat
 
   @impl true
   def validate_publish(impl, message) do
-    validate_message_stream_key(impl, message.stream_key)
+    message.stream_key
+    |> format_stream_key()
+    |> Users.find_user()
+    |> validate_stream_status()
+    |> start_stream(impl)
   end
 
   @impl true
@@ -18,38 +23,35 @@ defimpl Membrane.RTMP.MessageValidator, for: StreamCore.LiveStream.StreamValidat
     {:ok, :data_frame_started}
   end
 
-  defp validate_message_stream_key(impl, message_stream_key) do
-    message_stream_key
-    |> handle_message_stream_key()
-    |> Map.take([:username])
-    |> Users.find_user()
-    |> case do
-      {:ok, %User{} = user} ->
-        handle_user_stream_key(impl, user)
+  defp start_stream({:ok, %User{} = user}, impl) do
+    stream =
+      LiveStream.update_live_stream(
+        impl.socket,
+        fn _ -> %{is_live?: true, user: user} end
+      )
 
-      {:error, motive} ->
-        {:error, motive}
+    LiveStreamStatus.broadcast_universal_stream_online(stream)
+
+    {:ok, :stream_started}
+  end
+
+  defp start_stream({:error, reason}, _), do: {:error, reason}
+
+  defp format_stream_key(message_stream_key) do
+    [username, _stream_key] = String.split(message_stream_key, "_")
+
+    %{username: username}
+  end
+
+  defp validate_stream_status({:ok, %User{} = user}) do
+    LiveStream.list_live_streams()
+    |> Enum.filter(fn stream -> stream.user.username == user.username end)
+    |> Enum.empty?()
+    |> case do
+      true -> {:ok, user}
+      false -> {:error, :stream_duplicated}
     end
   end
 
-  defp handle_user_stream_key(impl, %User{} = user) do
-    LiveStream.update_live_stream(
-      impl.socket,
-      fn _ -> %{is_live?: true, user: user} end
-    )
-
-    Phoenix.PubSub.broadcast(
-      StreamCore.PubSub,
-      "streamer_live",
-      {:streamer_went_live, user}
-    )
-
-    {:ok, :stream_published}
-  end
-
-  defp handle_message_stream_key(message_stream_key) do
-    [username, stream_key] = String.split(message_stream_key, "_")
-
-    %{username: username, stream_key: stream_key}
-  end
+  defp validate_stream_status({:error, reason}), do: {:error, reason}
 end

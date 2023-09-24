@@ -266,6 +266,7 @@ defmodule StreamCoreWeb.CoreComponents do
   attr(:name, :any)
   attr(:label, :string, default: nil)
   attr(:value, :any)
+  attr(:class, :string, default: nil)
 
   attr(:type, :string,
     default: "text",
@@ -365,7 +366,7 @@ defmodule StreamCoreWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class="flex flex-col gap-2">
+    <div phx-feedback-for={@name} class="flex flex-col flex-grow gap-2">
       <.label for={@id}><%= @label %></.label>
       <input
         type={@type}
@@ -374,7 +375,8 @@ defmodule StreamCoreWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
           "flex rounded-lg py-3 bg-neutral-800 bg-opacity-75 placeholder:text-neutral-400 text-white text-sm border border-white border-opacity-25",
-          @errors != [] && "border-orange-500 focus:border-orange-500"
+          @errors != [] && "border-orange-500 focus:border-orange-500",
+          @class
         ]}
         {@rest}
       />

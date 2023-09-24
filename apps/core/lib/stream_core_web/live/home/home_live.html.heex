@@ -14,35 +14,36 @@
       <section class="flex flex-col gap-6">
         <h3 class="text-white text-opacity-25 text-md font-semibold">Followed channels</h3>
         <div class="flex flex-col gap-4">
-
-        <%= if length(@current_user.following) > 0 do%>
-          <%= for following <- @current_user.following do %>
-            <.link
-              class={[
-                "flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity",
-                is_nil(Enum.find(@live_streams, fn s -> s.user.id == following.id end)) && "opacity-50"
-              ]}
-            >
-              <div class="flex flex-row gap-2 items-center">
-                <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
-                <span class="line-clamp-1">
-                  <%= following.username %>
-                </span>
-              </div>
-              <%= if Enum.find(@live_streams, fn s -> s.user.id == following.id end) do%>
-                <div  class="flex flex-row gap-2 items-center">
-                  <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
-                  <span>200</span>
+          <%= if length(@current_user.following) > 0 do%>
+            <%= for following <- @current_user.following do %>
+              <% stream = Enum.find(@live_streams, fn s -> s.user.id == following.id end) %>
+              <.link
+                navigate={"/#{following.username}"}
+                class={[
+                  "flex flex-row items-center justify-between font-semibold text-sm text-white text-opacity-75 hover:opacity-75 transition-opacity",
+                  is_nil(stream) && "opacity-50"
+                ]}
+              >
+                <div class="flex flex-row gap-2 items-center">
+                  <img class="w-6 h-6 rounded-full" src="https://avatars.githubusercontent.com/u/30274817?v=4">
+                  <span class="line-clamp-1">
+                    <%= following.username %>
+                  </span>
                 </div>
-              <% end %>
-            </.link>
+                <%= if stream do%>
+                  <div  class="flex flex-row gap-2 items-center">
+                    <.icon name="hero-eye-solid" class="h-4 w-4 text-red-500" />
+                    <span><%= stream.viewer_count %></span>
+                  </div>
+                <% end %>
+              </.link>
+            <% end %>
+          <% else %>
+            <div class="flex flex-col flex-grow h-[400px] justify-center items-center text-white text-opacity-50">
+              <.icon name="hero-eye-slash-solid" class="h-4 w-4" />
+              <span>You do not follow no one yet!</span>
+            </div>
           <% end %>
-        <% else %>
-          <div class="flex flex-col flex-grow h-[400px] justify-center items-center text-white text-opacity-50">
-            <.icon name="hero-eye-slash-solid" class="h-4 w-4" />
-            <span>You do not follow no one yet!</span>
-          </div>
-        <% end %>
         </div>
       </section>
     <% end %>
@@ -123,10 +124,9 @@
         <% else %>
           <div class="flex flex-col flex-grow h-[400px] justify-center items-center text-white text-opacity-50">
             <.icon name="hero-eye-slash-solid" class="h-4 w-4" />
-            <span>No stream preview</span>
+            <span>No streamers online</span>
           </div>
         <% end %>
-
       </div>
     </section>
   </div>

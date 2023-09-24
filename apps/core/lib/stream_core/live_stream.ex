@@ -1,9 +1,11 @@
 defmodule StreamCore.LiveStream do
-  use Membrane.Pipeline
-
-  alias StreamCore.LiveStream.Stream
   alias Membrane.HTTPAdaptiveStream.{Sink, SinkBin}
   alias Membrane.RTMP.SourceBin
+  alias StreamCore.LiveStream.Stream
+  alias StreamCore.LiveStreamStatus
+  alias StreamCore.Users.User
+
+  use Membrane.Pipeline
 
   @stream_output_dir Application.compile_env(:stream_core, :stream_output_dir, "output")
 
@@ -116,9 +118,11 @@ defmodule StreamCore.LiveStream do
     Agent.update(
       StreamCore.SocketAgent,
       fn sockets ->
-        %{user: user} = Map.get(sockets, state.socket)
+        stream = Map.get(sockets, state.socket)
 
-        StreamCore.FileStorage.remove_output_folder(user, state)
+        LiveStreamStatus.broadcast_stream_offline(stream)
+        LiveStreamStatus.broadcast_universal_stream_offline(stream)
+        StreamCore.FileStorage.remove_output_folder(stream.user, state)
 
         Map.delete(sockets, state.socket)
       end
@@ -131,7 +135,9 @@ defmodule StreamCore.LiveStream do
     Agent.get(
       StreamCore.SocketAgent,
       fn sockets ->
-        Map.values(sockets)
+        sockets
+        |> Map.values()
+        |> Enum.filter(fn stream -> not is_nil(stream.user) end)
       end
     )
   end
@@ -173,15 +179,8 @@ defmodule StreamCore.LiveStream do
     live_stream = find_live_stream(socket: socket)
 
     case live_stream.user do
-      nil ->
-        nil
-
-      user ->
-        Phoenix.PubSub.broadcast(
-          StreamCore.PubSub,
-          "live:#{user.username}",
-          live_stream
-        )
+      nil -> nil
+      %User{} -> LiveStreamStatus.broadcast_stream_change(live_stream)
     end
 
     live_stream
