@@ -89,8 +89,7 @@ defmodule StreamCoreWeb.LiveStreamLive do
         {:new_message, %Message{} = message},
         %{assigns: %{chat_messages: chat_messages}} = socket
       ) do
-    {:noreply,
-     assign(socket, chat_messages: Enum.take(chat_messages ++ [message], -10) |> IO.inspect())}
+    {:noreply, assign(socket, chat_messages: Enum.take(chat_messages ++ [message], -10))}
   end
 
   @send_message_event_params %{
