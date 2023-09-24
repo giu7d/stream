@@ -3,7 +3,7 @@
     <%= if @stream_is_live? do %>
       <video id="player" class="object-cover h-screen" autoplay muted></video>
     <% else %>
-      <h2 class="text-white text-xl font-bold flex flex-grow items-center justify-center">
+      <h2 id="stream-offline" class="text-white text-xl font-bold flex flex-grow items-center justify-center">
         Stream is offline
       </h2>
     <% end %>
