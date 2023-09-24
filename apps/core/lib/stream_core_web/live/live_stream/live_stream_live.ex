@@ -1,4 +1,6 @@
 defmodule StreamCoreWeb.LiveStreamLive do
+  alias StreamCore.Chat
+  alias StreamCore.Chat.Message
   alias StreamCore.LiveStream
   alias StreamCore.LiveStream.Stream
   alias StreamCore.LiveStreamMonitor
@@ -25,6 +27,7 @@ defmodule StreamCoreWeb.LiveStreamLive do
                %{stream | viewer_count: stream.viewer_count + 1}
              end)
            ) do
+      Chat.subscribe(user)
       LiveStreamStatus.subscribe(user)
       LiveStreamMonitor.monitor(__MODULE__, params)
 
@@ -33,14 +36,21 @@ defmodule StreamCoreWeb.LiveStreamLive do
          socket,
          page_title: user.username,
          stream: live_stream,
-         user: user,
          stream_output_file: @stream_output_file,
          stream_is_live?: live_stream.is_live?,
          stream_views: live_stream.viewer_count,
-         stream_user: %{
-           name: user.username,
-           avatar_url: "https://avatars.githubusercontent.com/u/30274817?v=4"
-         }
+         stream_user:
+           Map.merge(user, %{
+             avatar_url: "https://avatars.githubusercontent.com/u/30274817?v=4"
+           }),
+         chat_messages: [
+           %Message{
+             content:
+               "test content just for demo! asdasdasdasdasd asdasdas dasdasdasdas dasdasdasd asdasd",
+             sender: user
+           }
+         ],
+         chat_form: to_form(%{}, as: "chat_form")
        )}
     end
   end
@@ -73,5 +83,32 @@ defmodule StreamCoreWeb.LiveStreamLive do
        stream_views: 0,
        stream_is_live?: false
      )}
+  end
+
+  def handle_info(
+        {:new_message, %Message{} = message},
+        %{assigns: %{chat_messages: chat_messages}} = socket
+      ) do
+    {:noreply,
+     assign(socket, chat_messages: Enum.take(chat_messages ++ [message], -10) |> IO.inspect())}
+  end
+
+  @send_message_event_params %{
+    chat_form: %{
+      chat_message: [type: :string]
+    }
+  }
+  def handle_event(
+        "send_message",
+        params,
+        socket
+      ) do
+    with {:ok, params} <- Validator.cast(params, @send_message_event_params),
+         streamer <- socket.assigns.stream_user,
+         sender <- socket.assigns.current_user do
+      Chat.broadcast_message(streamer, sender, params.chat_form.chat_message)
+
+      {:noreply, socket}
+    end
   end
 end

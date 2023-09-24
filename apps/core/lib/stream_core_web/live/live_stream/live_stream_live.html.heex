@@ -17,7 +17,7 @@
         <div class="flex items-center gap-2">
           <img src={@stream_user.avatar_url} alt="streamer avatar" class="h-8 w-8 rounded-full" />
           <span class="text-xs text-white font-semibold">
-            <%= @stream_user.name %>
+            <%= @stream_user.username %>
           </span>
         </div>
       </div>
@@ -30,16 +30,26 @@
         </div>
       <% end %>
     </div>
-    <div class="flex flex-grow h-full w-full items-center justify-center"></div>
+    <!-- CHAT -->
     <%= if @stream_is_live? do %>
-      <div class="flex py-6 px-4 gap-4">
-        <input
+      <!-- CHAT Messages -->
+      <div class="flex flex-grow flex-col h-full w-full px-6 items-end justify-end gap-1 overflow-hidden">
+        <%= for message <- @chat_messages do %>
+          <div class="flex flex-col px-4 py-2 rounded-lg bg-neutral-800 bg-opacity-25 backdrop-blur-sm text-white text-sm max-w-[50%]">
+            <span class="font-semibold"><%= message.sender.username %></span>
+            <span class="opacity-75 overflow-hidden line-clamp-2 break-words overflow-ellipsis"><%= message.content %></span>
+          </div>
+        <% end %>
+      </div>
+      <!-- CHAT Input -->
+      <.form class="flex items-center justify-end px-6 pb-6 gap-4 w-full" for={@chat_form} phx-submit="send_message">
+        <.input
+          field={@chat_form[:chat_message]}
           type="text"
-          name="stream_comment"
-          id="stream_comment"
           placeholder="Type your comment..."
-          class="px-6 py-3 flex flex-grow rounded-lg bg-neutral-800 bg-opacity-75 placeholder:text-neutral-400 text-white text-sm border-none"
+          class="backdrop-blur-sm w-[50%] border-opacity-10 self-end"
         />
+        <!--
         <button class="h-11 w-11 aspect-square overflow-hidden rounded-full bg-neutral-800 bg-opacity-75 text-red-500">
           <.icon name="hero-heart-solid" class="h-5 w-5" />
           <div class="absolute like"><.icon name="hero-heart-solid" class="h-5 w-5" /></div>
@@ -47,14 +57,15 @@
           <div class="absolute like"><.icon name="hero-heart-solid" class="h-5 w-5" /></div>
           <div class="absolute like"><.icon name="hero-heart-solid" class="h-5 w-5" /></div>
         </button>
-      </div>
+        -->
+      </.form>
     <% end %>
   </div>
 </section>
 
 <script>
   const video = document.getElementById('player')
-  const src = `${window.location.origin}/api/streams/<%= @user.id %>/<%= @stream_output_file %>`
+  const src = `${window.location.origin}/api/streams/<%= @stream_user.id %>/<%= @stream_output_file %>`
 
   const isHLSSupported = Hls.isSupported()
   const isVideoTypeSupported = video.canPlayType('application/vnd.apple.mpegurl')
