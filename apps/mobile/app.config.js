@@ -11,12 +11,13 @@ module.exports = {
     // UI & Assets
     userInterfaceStyle: "light",
     icon: "./assets/icon.png",
+    assetBundlePatterns: ["**/*"],
+    userInterfaceStyle: "automatic",
     splash: {
       image: "./assets/splash.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
-    assetBundlePatterns: ["**/*"],
     // Build Stuff
     jsEngine: "hermes",
     runtimeVersion: "exposdk:49.0.0",
