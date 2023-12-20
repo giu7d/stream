@@ -1,56 +1,56 @@
-import "ts-node/register";
+import 'ts-node/register'
 
-import type { ExpoConfig } from "expo/config";
+import type { ExpoConfig } from 'expo/config'
 
 import {
   getApplicationBundleIdentifier,
-  getApplicationName,
-} from "./config/setupApp";
+  getApplicationName
+} from './config/setupApp'
 
 const config: ExpoConfig = {
   // App Information
   name: getApplicationName(),
-  slug: "stream-mobile",
-  scheme: "stream-mobile",
-  version: "1.0.0",
-  owner: "giu7d",
-  orientation: "portrait",
+  slug: 'stream-mobile',
+  scheme: 'stream-mobile',
+  version: '1.0.0',
+  owner: 'giu7d',
+  orientation: 'portrait',
   // UI & Assets
-  userInterfaceStyle: "automatic",
-  icon: "./assets/icon.png",
-  assetBundlePatterns: ["**/*"],
+  userInterfaceStyle: 'automatic',
+  icon: './assets/icon.png',
+  assetBundlePatterns: ['**/*'],
   splash: {
-    image: "./assets/splash.png",
-    resizeMode: "contain",
-    backgroundColor: "#ffffff",
+    image: './assets/splash.png',
+    resizeMode: 'contain',
+    backgroundColor: '#ffffff'
   },
   // Build Params
-  jsEngine: "hermes",
-  runtimeVersion: "exposdk:49.0.0",
-  plugins: ["expo-router"],
+  jsEngine: 'hermes',
+  runtimeVersion: 'exposdk:49.0.0',
+  plugins: ['expo-router'],
   experiments: {
-    tsconfigPaths: true,
+    tsconfigPaths: true
   },
   // Env Variables
   extra: {
-    ...process.env,
+    ...process.env
   },
   // Platforms
   ios: {
     supportsTablet: true,
-    bundleIdentifier: getApplicationBundleIdentifier(),
+    bundleIdentifier: getApplicationBundleIdentifier()
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./assets/adaptive-icon.png",
-      backgroundColor: "#ffffff",
+      foregroundImage: './assets/adaptive-icon.png',
+      backgroundColor: '#ffffff'
     },
-    package: getApplicationBundleIdentifier(),
+    package: getApplicationBundleIdentifier()
   },
   web: {
-    bundler: "metro",
-    favicon: "./assets/favicon.png",
-  },
-};
+    bundler: 'metro',
+    favicon: './assets/favicon.png'
+  }
+}
 
-export default config;
+export default config

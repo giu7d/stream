@@ -1,40 +1,61 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
-  useWindowDimensions,
-} from "react-native";
-import { useColorScheme as useNativewindColorScheme } from "nativewind";
-import { useEffect } from "react";
+import { useEffect } from 'react'
+import { ImageBackground, View, useColorScheme } from 'react-native'
 
-window.addEventListener = (x: any) => x;
-window.removeEventListener = (x: any) => x;
+import classNames from 'classnames'
+import { StatusBar } from 'expo-status-bar'
+import { useColorScheme as useNativewindColorScheme } from 'nativewind'
 
-export default function Page() {
-  const dimension = useWindowDimensions();
-  const colorScheme = useColorScheme();
-  const nativewindColorScheme = useNativewindColorScheme();
+type ColorScheme = 'light' | 'dark'
+
+type TemplateProps = {
+  colorScheme?: ColorScheme
+  children: React.ReactNode
+}
+
+function Template({ colorScheme = 'light', children }: TemplateProps) {
+  return (
+    <View
+      className={classNames(
+        'bg-white dark:bg-neutral-800',
+        'flex flex-grow p-8'
+      )}
+    >
+      <ImageBackground source={{ uri: '../assets/plus.svg' }}>
+        <StatusBar style={colorScheme} />
+        <View className="flex flex-grow items-center justify-center">
+          {children}
+        </View>
+      </ImageBackground>
+    </View>
+  )
+}
+
+export default function Home() {
+  const colorScheme = useColorScheme() as ColorScheme
+  const nativewindColorScheme = useNativewindColorScheme()
+
   useEffect(() => {
-    nativewindColorScheme.setColorScheme(colorScheme as any);
-  }, [colorScheme]);
+    nativewindColorScheme.setColorScheme(colorScheme)
+  }, [colorScheme])
 
   return (
-    <SafeAreaView className="light:bg-white dark:bg-neutral-900 flex flex-grow h-full">
-      <StatusBar style={colorScheme as any} />
-      <View className="h-full items-center justify-center gap-8">
-        <Text className="light:text-black dark:text-white">
+    <Template colorScheme={colorScheme as any}>
+      <View
+        className={classNames(
+          'w-4/5 h-4/5 rounded-lg',
+          'bg-neutral-200 dark:bg-neutral-950'
+        )}
+      >
+        {/* <Text className={classNames("text-black dark:text-white")}>
           Home page {dimension.width}x{dimension.height}
         </Text>
         <TouchableOpacity
           className="bg-blue-400 rounded-lg px-6 py-2"
           onPress={() => nativewindColorScheme.toggleColorScheme()}
         >
-          <Text className="light:text-black dark:text-white">Button</Text>
-        </TouchableOpacity>
+          <Text className="text-white">Button</Text>
+        </TouchableOpacity> */}
       </View>
-    </SafeAreaView>
-  );
+    </Template>
+  )
 }
