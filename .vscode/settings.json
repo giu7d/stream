@@ -1,3 +1,4 @@
 {
-  "elixirLS.projectDir": "apps/core"
+  "elixirLS.projectDir": "apps/core",
+  "eslint.workingDirectories": ["apps/mobile"]
 }
